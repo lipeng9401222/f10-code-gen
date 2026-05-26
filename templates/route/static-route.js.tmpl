@@ -1,0 +1,38 @@
+/**
+ * static-route.js.tmpl · 静态路由记录骨架
+ *
+ * 用法：插入到 web 工程的 routes.js 合适位置（通常是某个分组下）
+ * 来源：vue-docs/getting-started/getting-started-create-web-project.md + rules/component-usage-rules.md
+ *
+ * 占位符：
+ *   {{MODULE}}        模块（如 procurement / bidding）
+ *   {{APPNAME}}       应用名（如 bid-mgmt，kebab-case）
+ *   {{COMPONENT_NAME}} 组件名（如 BidMgmtList，PascalCase）
+ *   {{TITLE}}         中文标题（如 标段(包)管理）
+ */
+
+{
+  path: '/{{MODULE}}/{{APPNAME}}',
+  name: '{{COMPONENT_NAME}}List',
+  component: () => import('@/views/{{MODULE}}/{{APPNAME}}/{{APPNAME}}-list.vue'),   // 用 @ alias 必须 vite.config 已配
+  meta: {
+    title: '{{TITLE}}',
+    keepAlive: true,
+    icon: '<FILL: 可选，菜单图标，如 Folder / List / Tag，用前查 components/components-icon.md>'
+  }
+}
+
+// 弹窗页面（add.vue / edit.vue / detail.vue）**不需要**注册路由
+// 它们通过 $dialog API 动态加载，不出现在 URL 中
+
+// =====================================================
+// 备注：如果你的工程使用 menu.json 配置侧边栏
+// =====================================================
+// 在 menu.json 对应分组下加：
+//
+// {
+//   "title": "{{TITLE}}",
+//   "path": "/{{MODULE}}/{{APPNAME}}",
+//   "icon": "<FILL: 同上>",
+//   "permission": "<FILL: 可选权限点>"
+// }

@@ -1,0 +1,105 @@
+/**
+ * form-model.js.tmpl · 表单页（弹窗）数据模型骨架
+ *
+ * 用法：cp 到 add.vue / edit.vue / detail.vue 的 <script setup> 内
+ * 来源：vue-docs/page-examples/base/{add,edit,detail}.vue + rules/data-model-rules.md + dialog-interaction.md § 4.1
+ *
+ * 三种角色：
+ *   - add.vue   仅提交，无 props
+ *   - edit.vue  接 rowGuid props，onMounted 拉数据填充
+ *   - detail.vue 接 rowGuid props，所有字段 disabled
+ */
+
+import { ref, inject, computed, onMounted } from 'vue';
+import { Utils, Hooks } from '@epframe/eui-core';
+import { EMessage } from '@epoint-fe/eui-components';
+
+const { useListModel } = Hooks;
+const { request } = Utils;
+
+defineOptions({ name: '{{COMPONENT_NAME}}' });   // 例 ProcurementBidMgmtAdd
+
+// <FILL: 仅 edit/detail 才需要 props>
+// const props = defineProps({
+//   rowGuid: { type: String, default: '' }
+// });
+
+// 弹窗关闭（来源：dialog-interaction.md § 3.3）
+const getCurrentDialog = inject('getCurrentDialog');
+const closeDialog = (action = 'close', data) => {
+  getCurrentDialog()?.close(action === 'close' ? action : data);
+};
+
+// 表单引用
+const formRef = ref(null);
+
+// 表单数据
+const formData = ref({
+  // <FILL: 根据 intent.fields 列出所有字段，给默认值>
+  // name: '',
+  // classification: undefined,
+  // status: undefined,
+  // deadline: '',
+});
+
+// 校验规则
+const rules = {
+  // <FILL: 根据 intent.fields 决定哪些字段必填、长度限制等>
+  // name: [
+  //   { required: true, message: '<FILL: 提示>', trigger: 'blur' },
+  //   { min: 1, max: 50, message: '长度 1~50 字符', trigger: 'blur' }
+  // ],
+  // classification: [{ required: true, message: '请选择分类', trigger: 'change' }]
+};
+
+// 选项数据（如有下拉、单选、多选）
+// <FILL: 仅当表单含枚举字段时声明>
+// const classificationList = useListModel('/api/{{MODULE}}/{{APPNAME}}/classificationOptions', {
+//   labelField: 'label',
+//   lazy: false
+// });
+
+// 提交状态
+const submitting = ref(false);
+
+// 取消
+const onCancel = () => closeDialog('cancel');
+
+// 提交（仅 add / edit）
+const onSubmit = async () => {
+  const valid = await formRef.value?.validate();
+  if (!valid) return;
+  submitting.value = true;
+  try {
+    const url = '<FILL: /api/{{MODULE}}/{{APPNAME}}/add 或 /update>';
+    const { state, message } = await request({
+      url,
+      data: { params: { ...formData.value } }
+    });
+    EMessage({ message, type: state ? 'success' : 'error' });
+    if (state) closeDialog('submit', formData.value);
+  } catch (e) {
+    console.error('<FILL: 操作类型>失败:', e);
+    EMessage({ message: '操作失败', type: 'error' });
+  } finally {
+    submitting.value = false;
+  }
+};
+
+// 拉详情数据（仅 edit / detail）
+// <FILL: 仅 edit / detail 才需要>
+// const loadDetail = async () => {
+//   try {
+//     const { state, data } = await request({
+//       url: '/api/{{MODULE}}/{{APPNAME}}/info',
+//       data: { params: { id: props.rowGuid } }
+//     });
+//     if (state) formData.value = { ...formData.value, ...data };
+//   } catch (e) {
+//     console.error('加载详情失败:', e);
+//   }
+// };
+
+// onMounted(() => {
+//   if (props.rowGuid) loadDetail();
+// });

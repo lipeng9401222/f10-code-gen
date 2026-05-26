@@ -1,0 +1,147 @@
+/**
+ * crud.mock.ts.tmpl · CRUD 接口 mock 骨架
+ *
+ * 用法：cp 到 packages/<workspace>/mock/<module>/<appName>.mock.ts
+ * 来源：vue-docs/mock-development.md + rules/data-model-rules.md
+ *
+ * ⚠️ 强制：所有给数据模型用的接口 method 必须是 'post'（来源：data-model-rules.md R2）
+ */
+
+import { defineMock } from '@epframe/mock-server';
+import Mock from 'mockjs';
+
+// <FILL: 根据 intent.fields 设计 mock 数据生成模板>
+function generateMockData(count = 50) {
+  const list = Mock.mock({
+    [`list|${count}`]: [{
+      'id|+1': 1
+      // <FILL: 列出每个字段的 Mock.js 模板>
+      // 'name': '@ctitle(5,15)',
+      // 'code|+1': 1000,
+      // 'classification|1': [1, 2],
+      // 'status|1': [0, 1, 2, 3],
+      // 'createTime': '@datetime',
+      // 'creator': '@cname'
+    }]
+  }).list;
+  return list;
+}
+
+// 应用搜索 conditions（与 createSubModel 的 conditions 格式对齐）
+function applyConditions(data: any[], conditions: any[]) {
+  if (!conditions || conditions.length === 0) return data;
+  return data.filter((item) => {
+    return conditions.every((c) => {
+      const val = item[c.path];
+      switch (c.operation) {
+        case 'EQ': return val === c.value;
+        case 'NQ': return val !== c.value;
+        case 'EQBLANK': return val === '' || val === null || val === undefined;
+        case 'NQBLANK': return val !== '' && val !== null && val !== undefined;
+        case 'LIKE': return String(val).includes(String(c.value));
+        case 'NOTLIKE': return !String(val).includes(String(c.value));
+        case 'LEFTLIKE': return String(val).startsWith(String(c.value));
+        case 'RIGHTLIKE': return String(val).endsWith(String(c.value));
+        case 'IN': return Array.isArray(c.value) && c.value.includes(val);
+        case 'NOTIN': return !(Array.isArray(c.value) && c.value.includes(val));
+        default: return true;
+      }
+    });
+  });
+}
+
+// 模拟数据持久化（mock-server 无状态，开发阶段可用模块级变量）
+let DATA = generateMockData(50);
+
+export default defineMock([
+  // ============== 列表查询（POST，要给 useTableModel 用）==============
+  {
+    url: '/api/{{MODULE}}/{{APPNAME}}/list',
+    method: 'post',
+    response({ body }) {
+      const { current = 1, pageSize = 10, conditions = [] } = body || {};
+      const filtered = applyConditions(DATA, conditions);
+      const start = (current - 1) * pageSize;
+      return {
+        data: filtered.slice(start, start + pageSize),
+        total: filtered.length
+      };
+    }
+  },
+
+  // ============== 单条详情（POST，给 edit / detail 用）==============
+  {
+    url: '/api/{{MODULE}}/{{APPNAME}}/info',
+    method: 'post',
+    response({ body }) {
+      const { id } = body?.params || {};
+      const item = DATA.find((d) => String(d.id) === String(id));
+      return item
+        ? { state: true, data: item }
+        : { state: false, message: '未找到该记录' };
+    }
+  },
+
+  // ============== 新增（POST）==============
+  {
+    url: '/api/{{MODULE}}/{{APPNAME}}/add',
+    method: 'post',
+    response({ body }) {
+      const formData = body?.params || {};
+      const newItem = { id: DATA.length + 1, ...formData };
+      DATA.unshift(newItem);
+      return { state: true, message: '新增成功' };
+    }
+  },
+
+  // ============== 更新（POST）==============
+  {
+    url: '/api/{{MODULE}}/{{APPNAME}}/update',
+    method: 'post',
+    response({ body }) {
+      const formData = body?.params || {};
+      const idx = DATA.findIndex((d) => String(d.id) === String(formData.id));
+      if (idx === -1) return { state: false, message: '未找到该记录' };
+      DATA[idx] = { ...DATA[idx], ...formData };
+      return { state: true, message: '更新成功' };
+    }
+  },
+
+  // ============== 删除单条（POST）==============
+  {
+    url: '/api/{{MODULE}}/{{APPNAME}}/delete',
+    method: 'post',
+    response({ body }) {
+      const { id } = body?.params || {};
+      const beforeLen = DATA.length;
+      DATA = DATA.filter((d) => String(d.id) !== String(id));
+      return DATA.length < beforeLen
+        ? { state: true, message: '删除成功' }
+        : { state: false, message: '未找到该记录' };
+    }
+  },
+
+  // ============== 批量删除（POST）==============
+  {
+    url: '/api/{{MODULE}}/{{APPNAME}}/batchDelete',
+    method: 'post',
+    response({ body }) {
+      const { ids = [] } = body?.params || {};
+      DATA = DATA.filter((d) => !ids.map(String).includes(String(d.id)));
+      return { state: true, message: `批量删除成功，共 ${ids.length} 条` };
+    }
+  }
+
+  // ============== 枚举选项（POST，给 useListModel 用）==============
+  // <FILL: 根据 intent.fields 加每个枚举字段的 Options 接口>
+  // {
+  //   url: '/api/{{MODULE}}/{{APPNAME}}/<FILL: 字段>Options',
+  //   method: 'post',
+  //   body: {
+  //     data: [
+  //       { label: '<FILL>', value: 1 },
+  //       { label: '<FILL>', value: 2 }
+  //     ]
+  //   }
+  // }
+]);

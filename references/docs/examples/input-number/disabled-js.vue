@@ -1,0 +1,9 @@
+<template>
+  <e-input-number v-model="num" :disabled="true" />
+</template>
+
+<script setup>
+import { ref } from 'vue';
+
+const num = ref(1);
+</script>

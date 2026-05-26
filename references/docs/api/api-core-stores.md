@@ -1,0 +1,5 @@
+---
+title: 状态管理 API
+originUrl: http://192.168.219.170/docs/vue/latest/frame/api/core/stores/
+---
+> 📖 **原文档地址**: [点击查看线上文档](http://192.168.219.170/docs/vue/latest/frame/api/core/stores/)

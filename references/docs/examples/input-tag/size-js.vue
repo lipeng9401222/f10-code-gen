@@ -1,0 +1,12 @@
+<template>
+  <e-input-tag v-model="input" size="large" placeholder="Please input" />
+  <br />
+  <e-input-tag v-model="input" placeholder="Please input" />
+  <br />
+  <e-input-tag v-model="input" size="small" placeholder="Please input" />
+</template>
+
+<script setup>
+import { ref } from 'vue';
+const input = ref();
+</script>

@@ -1,0 +1,25 @@
+<template>
+  <div class="m-4">
+    <e-select v-model="value" class="m-2" value-key="id" placeholder="请选择">
+      <e-option v-for="item in options" :key="item.id" :label="item.label" :value="item" />
+    </e-select>
+    <e-select v-model="value" class="m-2" :options="options" value-key="id" placeholder="请选择" />
+
+    <p>
+      selected option's description:
+      {{ value ? value.desc : 'no select' }}
+    </p>
+  </div>
+</template>
+
+<script setup>
+import { ref } from 'vue';
+
+const value = ref();
+const options = ref([
+  { id: 1, label: 'Option A', desc: 'Option A - 230506' },
+  { id: 2, label: 'Option B', desc: 'Option B - 230506' },
+  { id: 3, label: 'Option C', desc: 'Option C - 230506' },
+  { id: 4, label: 'Option A', desc: 'Option A - 230507' },
+]);
+</script>

@@ -1,0 +1,8 @@
+<template>
+  <e-input v-model="input" disabled placeholder="Please input" />
+</template>
+
+<script setup>
+import { ref } from 'vue';
+const input = ref('');
+</script>

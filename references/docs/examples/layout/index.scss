@@ -1,0 +1,30 @@
+:root {
+  --e-c-bg-row: #f9fafc;
+  --e-c-bg-purple: #d3dce6;
+  --e-c-bg-purple-dark: #99a9bf;
+  --e-c-bg-purple-light: #e5e9f2;
+}
+
+.dark {
+  --e-c-bg-row: #18191a;
+  --e-c-bg-purple: #46494d;
+  --e-c-bg-purple-dark: #242526;
+  --e-c-bg-purple-light: #667180;
+}
+
+.row-bg {
+  padding: 10px 0;
+  background-color: var(--e-c-bg-row);
+}
+
+.e-bg-purple-dark {
+  background: var(--e-c-bg-purple-dark);
+}
+
+.e-bg-purple {
+  background: var(--e-c-bg-purple);
+}
+
+.e-bg-purple-light {
+  background: var(--e-c-bg-purple-light);
+}

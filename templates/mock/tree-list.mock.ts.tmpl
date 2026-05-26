@@ -1,0 +1,43 @@
+/**
+ * tree-list.mock.ts.tmpl · 树+列表 mock 骨架（用于 hasTree=true 场景）
+ *
+ * 用法：在 crud.mock.ts.tmpl 基础上**追加** tree 接口
+ * 来源：vue-docs/frontpage.md § useTreeModel 树数据字段 + rules/data-model-rules.md R3
+ *
+ * ⚠️ 树字段必须用 value / label / children（不要用 id / text 或 id / name）
+ */
+
+import { defineMock } from '@epframe/mock-server';
+
+// <FILL: 根据 intent 设计树结构>
+const TREE_DATA = [
+  // ✅ 正确：value / label / children
+  {
+    value: 'cat-1',
+    label: '<FILL: 一级分类名 1>',
+    children: [
+      { value: 'cat-1-1', label: '<FILL: 二级分类名 1.1>' },
+      { value: 'cat-1-2', label: '<FILL: 二级分类名 1.2>' }
+    ]
+  },
+  {
+    value: 'cat-2',
+    label: '<FILL: 一级分类名 2>',
+    children: [
+      { value: 'cat-2-1', label: '<FILL: 二级分类名 2.1>' }
+    ]
+  }
+
+  // ❌ 错误示例（千万别这么写）：
+  // { id: 'cat-1', name: '...' }     // 用了 id/name
+  // { id: 'cat-1', text: '...' }     // 用了 id/text
+];
+
+export default defineMock([
+  // ============== 树查询（POST，给 useTreeModel 用）==============
+  {
+    url: '/api/{{MODULE}}/{{APPNAME}}/tree',
+    method: 'post',
+    body: TREE_DATA   // 直接返回数组，不要包 data: [...]（useTreeModel 期望直接数组）
+  }
+]);

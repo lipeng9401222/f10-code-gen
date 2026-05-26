@@ -1,0 +1,184 @@
+/**
+ * list-model.js.tmpl · 列表页数据模型骨架
+ *
+ * 用法：cp 到目标 .vue 的 <script setup> 内，按 <FILL: ...> 标记替换。
+ * 占位符两类：
+ *   {{NAME}} {{MODULE}} ...    机械替换（sed 一次搞定）
+ *   <FILL: ...>                必须 Agent / 人工判断后填，不能批量替换
+ *
+ * 来源：vue-docs/page-examples/base/list.vue + rules/data-model-rules.md
+ */
+
+import { ref, computed, onMounted, onActivated } from 'vue';
+import { Utils, Hooks } from '@epframe/eui-core';
+
+const { useTableModel, useListModel, useTreeModel } = Hooks;
+const { createSubModel, PageConfig, request } = Utils;
+
+// 页面配置模型
+const pageConfig = new PageConfig({});
+
+// 定义数据模型
+const model = Utils.defineDataModel(() => {
+  // 选中行 keys
+  const selectedRowKeys = ref([]);
+
+  // 搜索条件子模型
+  const searchParams = createSubModel(
+    {
+      logicOperator: 'and',
+      conditions: []
+    },
+    {
+      update: (params) => {
+        searchParams.data.conditions = params.conditions;
+        searchParams.data.logicOperator = params.logicOperator;
+      }
+    }
+  );
+
+  // <FILL: 列举页面用到的所有枚举字段，每个一个 useListModel>
+  // 例：审核状态、分类、状态等
+  // const reviewStateList = useListModel('/api/{{MODULE}}/{{APPNAME}}/reviewStateOptions', {
+  //   labelField: 'label',
+  //   lazy: false
+  // });
+
+  // 主列表
+  const gridList = useTableModel('/api/{{MODULE}}/{{APPNAME}}/list', {
+    idField: 'id',
+    lazy: false,
+    params: computed(() => ({
+      ...searchParams.data
+      // <FILL: 如果有左侧树或其他筛选，加在这里>
+      // category: selectedCategory.value !== 'all' ? selectedCategory.value : undefined
+    }))
+  });
+
+  // <FILL: 如果 hasTree=true，加 useTreeModel>
+  // const typeTree = useTreeModel('/api/{{MODULE}}/{{APPNAME}}/tree', {
+  //   lazy: false
+  // });
+
+  return {
+    global: { pageConfig },
+    models: {
+      searchParams,
+      // <FILL: 这里把上面声明的所有 useListModel / useTableModel / useTreeModel / ref 都加进来>
+      // reviewStateList,
+      gridList,
+      // typeTree,
+      selectedRowKeys
+    }
+  };
+});
+
+// 工具栏按钮
+const isSelected = computed(() => model.selectedRowKeys.length > 0);
+const toolbarBtnsRef = ref(null);
+const toolbarBtnList = ref([
+  // <FILL: 根据 intent.actions 列出所有工具栏按钮>
+  // {
+  //   type: 'primary',
+  //   onClick: () => openAddDialog('<FILL: 弹窗标题>'),
+  //   content: '新增'
+  // },
+  // {
+  //   type: 'danger',
+  //   onClick: () => handleBatchDelete(),
+  //   disabled: () => !isSelected.value,
+  //   content: '批量删除'
+  // }
+]);
+
+// 搜索配置
+const toolbarSearchRef = ref(null);
+const operationsList = ref([
+  { label: '等于', type: 'input', value: 'EQ' },
+  { label: '不等于', type: 'input', value: 'NQ' },
+  { label: '等于空', type: 'none', value: 'EQBLANK' },
+  { label: '不等于空', type: 'none', value: 'NQBLANK' },
+  { label: '模糊匹配', type: 'input', value: 'LIKE' },
+  { label: '模糊匹配（排除）', type: 'input', value: 'NOTLIKE' },
+  { label: '以...开头', type: 'input', value: 'LEFTLIKE' },
+  { label: '以...结尾', type: 'input', value: 'RIGHTLIKE' },
+  { label: '包含', type: 'multiSelect', value: 'IN' },
+  { label: '不包含', type: 'multiSelect', value: 'NOTIN' }
+]);
+
+const searchList = computed(() => [
+  // <FILL: 根据 intent.fields 列出所有搜索字段>
+  // 第一项约定为 mixSearch（多字段联合搜）
+  // {
+  //   label: '全部',
+  //   field: 'searchField',
+  //   fieldType: 'string',
+  //   type: 'mixSearch',
+  //   default: true,
+  //   operation: 'LIKE',
+  //   operations: operationsList.value,
+  //   data: [
+  //     <FILL: 这里列出可被联合搜的字段>
+  //   ]
+  // },
+  // <FILL: 其他独立搜索字段>
+]);
+
+const onAdvanceSearch = (params) => {
+  model.searchParams.update(params);
+};
+
+// 表格列配置
+const tableKey = ref(0);
+const tableRef = ref(null);
+const columnList = ref([
+  // <FILL: 根据 intent.fields 列出所有列>
+  // {
+  //   title: '<FILL: 列标题>',
+  //   dataIndex: '<FILL: 字段名>',
+  //   width: 180,
+  //   ellipsis: true,
+  //   sorter: true
+  // },
+  {
+    dataIndex: 'action',
+    title: '操作',
+    width: 180,
+    key: 'action',
+    action: {
+      asText: true,
+      defaultShowItems: 4,
+      items: [
+        // <FILL: 根据 intent.actions 列出操作>
+        // {
+        //   label: '详情',
+        //   onClick: (row) => openDetailDialog('<FILL: 标题>', row.id),
+        //   visible: () => true,
+        //   disabled: () => false
+        // },
+        // {
+        //   label: '编辑',
+        //   onClick: (row) => openEditDialog('<FILL: 标题>', row.id),
+        //   visible: (row) => /* <FILL: 业务可见性条件> */ true,
+        //   disabled: () => false
+        // },
+        // {
+        //   label: '删除',
+        //   onClick: (row) => handleDelete(row),
+        //   visible: () => true,
+        //   disabled: () => false
+        // }
+      ]
+    }
+  }
+]);
+
+// 页面激活时刷新表格 key
+onActivated(() => {
+  tableKey.value++;
+});
+
+// 初始化数据
+onMounted(() => {
+  model.methods.initData();
+});

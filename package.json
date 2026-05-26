@@ -1,0 +1,49 @@
+{
+  "name": "epoint-f10code-gen",
+  "version": "0.1.0",
+  "description": "epoint F10 Vue 框架页面代码生成 skill（rules + workflows + references + IDE 入口模板）",
+  "type": "module",
+  "bin": {
+    "epoint-f10code-gen": "./bin/cli.mjs"
+  },
+  "main": "./bin/cli.mjs",
+  "files": [
+    "bin",
+    "rules",
+    "workflows",
+    "references",
+    "templates",
+    "installer",
+    "scripts",
+    "SKILL.md",
+    "README.md",
+    "USAGE.md",
+    "CHANGELOG.md",
+    "ANTI-TEMPLATES.md"
+  ],
+  "scripts": {
+    "smoke": "node scripts/smoke-test.mjs",
+    "validate": "node scripts/validate-page.mjs",
+    "sync": "node scripts/sync-from-docs.mjs",
+    "init": "node bin/cli.mjs init",
+    "check": "node bin/cli.mjs check"
+  },
+  "keywords": [
+    "epoint",
+    "f10",
+    "vue",
+    "skill",
+    "agent",
+    "cursor",
+    "claude-code",
+    "windsurf",
+    "ai-coding"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "UNLICENSED",
+  "publishConfig": {
+    "access": "restricted"
+  }
+}

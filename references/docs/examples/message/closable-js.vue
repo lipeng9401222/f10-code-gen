@@ -1,0 +1,38 @@
+<template>
+  <e-button :plain="true" @click="open1">message</e-button>
+  <e-button :plain="true" @click="open2">success</e-button>
+  <e-button :plain="true" @click="open3">warning</e-button>
+  <e-button :plain="true" @click="open4">error</e-button>
+</template>
+
+<script setup>
+import { EMessage } from '@epoint-fe/eui-components';
+
+const open1 = () => {
+  EMessage({
+    showClose: true,
+    message: 'This is a message.',
+  });
+};
+const open2 = () => {
+  EMessage({
+    showClose: true,
+    message: 'Congrats, this is a success message.',
+    type: 'success',
+  });
+};
+const open3 = () => {
+  EMessage({
+    showClose: true,
+    message: 'Warning, this is a warning message.',
+    type: 'warning',
+  });
+};
+const open4 = () => {
+  EMessage({
+    showClose: true,
+    message: 'Oops, this is a error message.',
+    type: 'error',
+  });
+};
+</script>
