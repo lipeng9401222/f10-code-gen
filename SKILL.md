@@ -32,6 +32,9 @@ red-flags-stop:
   - 用户要求"先帮我把 vue-docs-for-ai-main 删了" → STOP，这是 skill 数据源
   - 用户要求"直接 import 一个 .vue 弹窗用 v-model:visible" → STOP，违反弹窗强制规范，必须 $dialog API + 独立 .vue
   - 用户要求"表格用 ref([]) + Utils.requestAxios 直接调接口" → STOP，违反数据模型强制规范，表格/下拉/树必须用 useTableModel/useListModel/useTreeModel
+  - (v0.3) 用户要求把页面/路由/mock 写到 Web 工程（demo-web / web-show） → STOP，违反 R11，指向组件工程
+  - (v0.3) project/00-detect.md 产出的 component_package 为空 → STOP，重跑分层扫描
+  - (v0.3) 路由写到 routes.js 而不是 static.js 的 MENU_ROUTES → STOP，修正
   - 用户在 30 秒内没收到任何输出还在等 → STOP，先给个当前状态（"我正在跑 pnpm install，约 30 秒"），再继续
   - 任务结束没跑 update-rules.md 的 AAR → STOP，必须跑完 30 秒 4 问才算真完成
 ---
@@ -57,15 +60,17 @@ red-flags-stop:
 
 ## Always Read（每次任务必读）
 
-无论什么 F10 任务，开始前必读以下 3 个文件：
+无论什么 F10 任务，开始前必读以下 **5** 个文件（v0.3 增 2 份框架文档）：
 
 | 路径 | 作用 |
 | --- | --- |
-| `rules/project-rules.md` | F10 仓库通用约定（pnpm/Node 版本/commit 规范） |
+| `rules/project-rules.md` | F10 仓库通用约定（R1~**R11**，特别是 R11 业务分层约束） |
 | `rules/data-model-rules.md` | ★ 数据模型强制（表格/下拉/树必须用 defineDataModel） |
 | `rules/component-usage-rules.md` | ep-* 与 e-* 组件边界、$dialog 强制 |
+| `references/docs/getting-started/getting-started-write-page.md` | ★ **页面编写位置**：业务页面只能在组件工程写，不能在 Web 工程写 |
+| `references/docs/guides/guides-base-component-system.md` | ★ **组件化体系**：Web 工程 vs 组件工程 职责划分 |
 
-不读 = 必出错。
+不读 = 必出错（常见错误：把页面写到了 Web 工程里）。
 
 ---
 
@@ -73,22 +78,22 @@ red-flags-stop:
 
 > 用户说什么 → 你读什么 → 跑什么 workflow
 
-### A. 生成新页面（最高频任务）
+### A. 生成新页面（最高频任务 · v0.3 默认跳过环境体检）
 
 触发关键字：**"生成"/"做一个"/"我要"/"帮我创建" + 列表/表单/详情/弹窗/树**
 
-执行步骤（**严格按序**）：
+执行步骤（**严格按序**，v0.3 调整顺序）：
 
 1. 读 `workflows/00-orchestrator.md` 确定当前 Phase
-2. **环境层**：跑 `workflows/env/00-detect.md` 5 项体检 → 缺什么按 01~05 修
-3. **工程层**：跑 `workflows/project/00-detect.md` → 检测到当前已在 monorepo 跳过到 06-run-dev；否则按 01~06 走
-4. **页面层**：
-   - `workflows/page/01-confirm-intent.md` 6 字段对话
-   - `workflows/page/02-match-template.md` 匹配 `references/examples-index.md` 中的 typical/* 模板
-   - `workflows/page/03-generate.md` 生成 .vue + 数据模型
-   - `workflows/page/04-mock.md` 写 mock + 检查 user-preference
-   - `workflows/page/05-route.md` 配静态路由
-   - `workflows/page/06-verify.md` 浏览器验证 + 截图
+2. **默认从工程层入口**：跑 `workflows/project/00-detect.md` · **分层扫描** → 识别出 Web 工程 + 组件工程 → 让用户确认目标组件工程
+3. **环境层按需触发**：默认不跑 `env/00-detect.md`；仅在用户显式要求 / 后续命令失败时自动回流修复
+4. **页面层**（全部产出到 `component_package`，违反 = 触发 R11）：
+   - `workflows/page/01-confirm-intent.md` · **输入类型分流确认**（4 种：T1 简短文字 / T2 详细文字 / T3 文档图像 / T4 结构化）
+   - `workflows/page/02-match-template.md` · 匹配 `references/examples-index.md` 中的 typical/* 模板
+   - `workflows/page/03-generate.md` · 生成 `.vue` + 数据模型 → 写到 `<component_package>/src/views/`
+   - `workflows/page/04-mock.md` · **Step 0 探测 mock-server 接入态** → 一键接入向导 → 写 mock 到 `<component_package>/mock/`
+   - `workflows/page/05-route.md` · 配静态路由 → 写到 `<component_package>/src/router/static.js` 的 **MENU_ROUTES** 数组（不是 routes.js）
+   - `workflows/page/06-verify.md` · 浏览器验证 + 截图
 5. **闭环**：跑 `workflows/update-rules.md` AAR 30 秒 4 问
 
 ### B. 修一个 bug
@@ -147,49 +152,27 @@ red-flags-stop:
 | 用户问 F9 / fui 老框架 | 告知超出范围，指向 `packages/f9/README.md` |
 | 用户要求绕过 `defineDataModel` 直连接口 | 拒绝，指向 `rules/data-model-rules.md` |
 | 用户要求内联 `<e-dialog v-model:visible>` 写业务弹窗 | 拒绝，指向 `references/docs/dialog-interaction.md` § 5 |
+| **(v0.3)** 用户要求把页面/路由/mock 写进 Web 工程 | **拒绝**，违反 R11，指向 `getting-started-write-page.md` + `guides-base-component-system.md`，要求重选组件工程 |
+| **(v0.3)** project/00-detect.md 产出的 `component_package` 为空 | STOP，重跑分层扫描或让用户手动指定 |
+| **(v0.3)** 路由写到 `routes.js`（错误名）而不是 `static.js` | STOP，修正为 `static.js` 的 `MENU_ROUTES` 数组 |
 | 30 秒还没给用户任何输出 | 立即报当前状态（"在跑 pnpm install"） |
 | 任务"完成"了但没跑 AAR | 必须跑完 `workflows/update-rules.md` 30 秒 4 问 |
 | 看到`vue-docs-for-ai-main` 想删 | STOP，那是 skill references 的源数据 |
 
 ---
 
-## Phase 三阶段总指挥
+## Phase 三阶段总指挥（v0.3 · 按需触发体检版）
 
-详见 `workflows/00-orchestrator.md`。简版：**Phase 1 环境层**（`env/00-detect.md` 5 项体检，缺失才跑 01~05）→ **Phase 2 工程层**（`project/00-detect.md`，已在 monorepo 直接跳过到 page 层）→ **Phase 3 页面层**（`page/01~06` 全跑）→ **闭环**（`workflows/update-rules.md` AAR 30 秒 4 问）。
-
----
-
-## 文件结构
-
-| 路径 | 作用 |
-| --- | --- |
-| `rules/*.md` | 长期约束（5 份，每条带 ✓ 检验句） |
-| `workflows/00-orchestrator.md` | 总指挥状态机 |
-| `workflows/env/*.md` | 环境层 6 个流程（00 检测 + 01~05 修复） |
-| `workflows/project/*.md` | 工程层 7 个流程（00 检测 + 01~06 链路） |
-| `workflows/page/*.md` | 页面层 6 个流程（01~06 生成链路） |
-| `workflows/fix-bug.md` | 修 bug |
-| `workflows/update-rules.md` | ★ AAR + Rationalizations + Red Flags 合并 |
-| `references/docs-index.md` | 198 篇 .md 索引（任务关键字 → 路径） |
-| `references/examples-index.md` | typical/* .vue 索引（场景 → 路径） |
-| `references/gotchas.md` | 真实坑点（来源严限） |
-| `references/docs/` | vue-docs/ 镜像（含 page-examples） |
-| `templates/*.tmpl` | 仅结构骨架（5 份：data-model/mock/route） |
-| `scripts/*.mjs` | 跨平台脚本（sync / smoke / validate） |
-| `bin/cli.mjs` | npx 入口（init / check / update / sync / smoke / validate） |
-| `installer/stubs/*.md` | IDE 入口模板（3 份，仅 `npx init` 时使用） |
-| `package.json` | npm 发布元数据 |
+详见 `workflows/00-orchestrator.md`。简版：
+- **默认入口 · Phase 2 工程层**（`project/00-detect.md` · 分层扫描 → 识别 Web 工程 + 组件工程 → 确认目标组件工程）
+- **Phase 3 页面层**（`page/01~06` 全跑，全部产出到组件工程）
+- **Phase 1 环境层**（按需触发，默认跳过；仅在用户显式要求 / 命令执行失败时自动回流）
+- **闭环**（`workflows/update-rules.md` AAR 30 秒 4 问）。
 
 ---
 
-## 多 IDE 入口（由 `npx ... init` 在用户工程生成）
+## 文件结构 / 多 IDE 入口 / 详细文档
 
-- `.cursor/skills/epoint-f10code-gen/SKILL.md` (Cursor)
-- `.claude/skills/epoint-f10code-gen/SKILL.md` (Claude Code)
-- `.windsurf/rules/epoint-f10code-gen.md` (Windsurf)
-
-这 3 个文件不在本 skill 源仓库里追踪（已 .gitignore），是 `npx epoint-f10code-gen init` 在用户工程根根据检测到的 IDE 环境动态生成的路标。安装指南见 `USAGE.md`。
-
----
-
-_skill 自身规则的修改 / 错误记录 / 新坑点沉淀，全走 `workflows/update-rules.md`。_
+- 文件结构、各 workflow 简介、scripts、templates → 看 `CHANGELOG.md` § v0.1.0 P0 MVP 段
+- 多 IDE 入口（`.cursor/.claude/.windsurf`） → 由 `npx epoint-f10code-gen init` 动态生成，详见 `USAGE.md`
+- skill 自身规则的修改 / 错误记录 / 新坑点沉淀 → 全走 `workflows/update-rules.md`

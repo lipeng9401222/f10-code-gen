@@ -4,103 +4,121 @@
 
 ---
 
-## 状态机总览
+## 状态机总览（v0.3 · 按需触发体检版）
 
 ```
 [START]
    │
    ▼
-[Phase 1 · 环境层]  env/00-detect.md  →  5 项体检
-   │  ├─ 全过 → 跳到 Phase 2
-   │  └─ 有 fail → 按 fail 项跑 env/01~05 → 重检
-   ▼
-[Phase 2 · 工程层]  project/00-detect.md  →  检测当前位置
+[Phase 2 · 工程层]  project/00-detect.md  →  分层扫描（Web 工程 vs 组件工程）
    │  ├─ 在 monorepo 内（如本仓库）→ 跳到 06-run-dev → Phase 3
    │  ├─ 不在工作区 → 跑 project/01~06 完整链路
    │  └─ 在已存在的 web 工程内 → 跳到 04-register
+   │       ↓ 任一步命令失败 (pnpm install / pnpm dev / eui-cli 等)
+   │       └→ 触发 [Phase 1 · 环境层] env/00-detect.md 自动诊断 → 修复 → 续跑
    ▼
-[Phase 3 · 页面层]  page/01-confirm-intent.md → ... → page/06-verify.md
+[Phase 3 · 页面层]
+   page/01-confirm-intent.md  →  按输入类型分流（4 种）
+   page/02-match-template.md
+   page/03-generate.md         →  写入【组件工程】(不是 Web 工程)
+   page/04-mock.md             →  Step 0 探测 mock-server 接入态
+   page/05-route.md            →  写入【组件工程】static.js MENU_ROUTES
+   page/06-verify.md
    │
    ▼
 [闭环]  update-rules.md  →  AAR 30 秒 4 问
    │
    ▼
 [END]
+
+[Phase 1 · 环境层]  (默认不主动跑，只在以下场景触发)
+  ① 用户显式要求"先做环境体检"
+  ② 命令执行失败 (ENOENT / command not found / 404 私有源等)
+  ③ project/00-detect.md 探测到关键依赖缺失
 ```
 
 ---
 
 ## 启动协议（每次任务）
 
-### Step 0 · 重新读 SKILL.md
+### Step 0 · 重新读 SKILL.md + 框架核心 5 件套
 
 **不论你"记得不记得"**：
 
 1. 读 `epoint-f10code-gen/SKILL.md` 完整内容
-2. 读 `epoint-f10code-gen/rules/project-rules.md` + `rules/data-model-rules.md` + `rules/component-usage-rules.md`（Always Read 三件套）
+2. **Always Read 五件套**（不读 = 必出错）：
+   - `rules/project-rules.md`（R1~R11，**特别是 R11 业务分层约束**）
+   - `rules/data-model-rules.md`（数据模型强制）
+   - `rules/component-usage-rules.md`（ep-/e- 边界 + $dialog）
+   - `references/docs/getting-started/getting-started-write-page.md`（页面编写位置：组件工程，不是 Web 工程）
+   - `references/docs/guides/guides-base-component-system.md`（组件化体系：分层约束）
 
-不读 = 必出错（stale memory）。
+不读 = 必出错（stale memory + 把页面写到 Web 工程的常见错误）。
 
 ### Step 1 · 给用户当前状态简报（30 秒以内）
 
-输出格式：
+输出格式（**默认版**，跳过环境体检）：
 
 ```
-我准备帮你生成 F10 页面，先做 3 件事：
-1. 跑 5 项环境体检（约 10 秒）
-2. 检测当前工程位置
-3. 跟你确认 6 字段需求
+我准备帮你生成 F10 页面，3 步搞定：
+1. 工程定位（识别 Web 工程 + 组件工程，约 3 秒）
+2. 需求确认（按你给的描述类型分流：简短文字 / 详细文字 / 文档 / 结构化）
+3. 生成 .vue + mock + 路由（产出到【组件工程】）
 
-体检中...（开始 Phase 1）
+环境体检已默认跳过（命令报错会自动回流诊断）；如你想先做体检，回复"先体检"。
+
+开始工程定位...（进入 Phase 2）
 ```
 
 **禁止**：30 秒不给用户任何输出（违反 SKILL.md Red Flags）。
 
 ---
 
-## Phase 1 · 环境层
+## Phase 1 · 环境层（按需触发，默认跳过）
 
-**目的**：确保 Node / pnpm / 私有源 / eui-cli 都齐了。
+**新策略（v0.3）**：环境体检**不再默认主动执行**，只在以下三种场景触发：
+
+### 触发场景
+
+| # | 触发条件 | 处置 |
+| --- | --- | --- |
+| ① | 用户显式说 "先做环境体检" / "check env" / "环境检查" | 立刻进 `env/00-detect.md` 全量 5 项体检 |
+| ② | 后续任意命令执行失败：`pnpm install` 报 ENOENT、`pnpm dev` 报 cannot find module、`eui-cli` 报 command not found、`npm install` 报 401/403（私有源未登录） | **自动**回流到 `env/00-detect.md`，定位失败项并按 A/B/C 档修复，修完**自动续跑**原命令 |
+| ③ | `project/00-detect.md` 探测到关键依赖（Node / pnpm / eui-cli / nrm）二进制不存在 | 同 ② |
+
+### 自动回流伪代码
+
+```
+try:
+  run_command("pnpm install")
+except CommandFailed as e:
+  if matches(e.output, ["ENOENT", "command not found", "E401", "E403", "version mismatch"]):
+    notify_user("检测到环境问题，回流到环境层诊断...")
+    run("workflows/env/00-detect.md")  # 自动诊断 + 修复
+    run_command("pnpm install")  # 自动续跑
+  else:
+    raise  # 非环境类错误，往上抛
+```
 
 ### 触发文件
 
-`workflows/env/00-detect.md`
-
-### 逻辑
-
-1. 跑 5 项体检（详见该文件）
-2. 输出体检报告：
-
-   ```
-   ✓ Node.js v22.21.1
-   ✓ pnpm v10.15.0
-   ✗ 私有源 epoint  → 当前是 npm，需要 nrm add epoint
-   ✓ eui-cli v3.x
-   ✓ 当前在 monorepo 内（vue-frame-live-docs）
-   ```
-
-3. 对每个 ✗ 项，按对应 workflow 修复：
-
-   | fail 项 | 跑 |
-   | --- | --- |
-   | Node 缺失 / 版本错 | `env/01-node.md`（C 档：给链接，用户自装） |
-   | pnpm 缺 | `env/02-pnpm.md`（A 档：自动 `npm i -g pnpm@10`） |
-   | 私有源 epoint 没切 | `env/03-source.md`（A 档：`nrm add` + `nrm use`） |
-   | nexus 没登录 | `env/04-login.md`（B 档：等用户在终端 `npm login`） |
-   | eui-cli 缺 | `env/05-eui-cli.md`（A 档：`npm i -g @epframe/eui-cli`） |
-
-4. **重检**直到 5 项全过 → 进 Phase 2。
+`workflows/env/00-detect.md`（详见该文件 5 项体检规范）
 
 ### 中断条件
 
-- 用户明确说 "跳过环境检查" → 记录 warning，进 Phase 2
 - C 档（Node 缺）用户没安装 → STOP，等用户装好回来
+- 用户回复"我自己装" → 输出待装清单 + 进 Phase 2（带 warning）
+
+### 显式跳过
+
+用户说 "不要做环境体检" / "我环境是好的" → **直接进 Phase 2**，但在后续命令失败时仍然回流（这是安全网，无法关闭）。
 
 ---
 
-## Phase 2 · 工程层
+## Phase 2 · 工程层（默认入口）
 
 **目的**：定位代码该写在哪个工程的哪个目录。
+**新版重点**：在 monorepo 内必须**分层扫描**，识别出「Web 工程」和「组件工程」，把生成位置锁定到**组件工程**（违反 = 触发 R11）。
 
 ### 触发文件
 
@@ -110,40 +128,57 @@
 
 | 当前位置 | 走法 | 耗时 |
 | --- | --- | --- |
-| **A. 已在 monorepo 内**（pwd 含 `vue-frame-live-docs` / `pnpm-workspace.yaml` 在祖先目录） | **零成本演示模式**：`project/06-run-dev.md`（直接 `pnpm dev`） | 5 秒 |
-| **B. 在已存在的 web 工程内**（有 `package.json` 含 `@epframe/eui-core` 依赖） | `project/04-register.md` → `05-install-build.md` → `06-run-dev.md` | 1 分钟 |
-| **C. 完全不在任何工程内** | 完整链路：`01-workspace.md` → `02-web.md` → (可选 `03-component.md`) → `04` → `05` → `06` | 5 分钟 |
+| **A. 已在 monorepo 内**（pwd 含 `pnpm-workspace.yaml` 在祖先目录） | **分层扫描** → 识别 Web 工程 + 组件工程 → 让用户确认目标组件工程 → 跳到 `06-run-dev.md` 启动 Web 工程 → 进 Phase 3 | 10 秒 |
+| **B. 在已存在的 web 工程内**（有 `package.json` 含 `@epframe/eui-core` 在 `dependencies` + `src/main.js`） | 检查是否有配套组件工程；没有则建议先建一个 → `project/04-register.md` → `05-install-build.md` → `06-run-dev.md` | 1 分钟 |
+| **C. 完全不在任何工程内** | 完整链路：`01-workspace.md` → `02-web.md` → **`03-component.md`（强制）** → `04` → `05` → `06` | 5 分钟 |
 
 ### 默认行为
 
-**当前 monorepo 内默认走 A**（用户已确认采用零成本演示模式）。
+**当前 monorepo 内默认走 A**（分层扫描 + 用户确认目标组件工程）。
+
+### 关键产出契约（v0.3 新增）
+
+`project/00-detect.md` 必须产出以下三个字段（缺一项 → STOP）：
+
+```yaml
+web_package:           # Web 工程绝对路径
+component_package:     # 目标【组件工程】绝对路径 ← Phase 3 全部写入这里
+target_view_dir:       # = <component_package>/src/views/<module>/<appName>/
+```
 
 ### 中断条件
 
 - 用户明确说"我要新工程" → 跳 A 模式，强制走 C
+- 检测到 monorepo 但**没有**组件工程 → 强制提示用户先 `eui-cli comp` 建一个，**不允许**回退到把页面写进 Web 工程
 - B 模式下 `package.json` 检测失败 → 询问用户是否清理重来 / 跳到 C
 
 ---
 
 ## Phase 3 · 页面层
 
-**目的**：6 步完成 .vue + mock + 路由生成。
+**目的**：6 步完成 .vue + mock + 路由生成，**全部写入组件工程**（违反 = 触发 R11）。
 
 ### 触发顺序（**严格按序**）
 
-1. `workflows/page/01-confirm-intent.md` · 6 字段对话
+1. `workflows/page/01-confirm-intent.md` · **输入类型分流确认**（4 种：简短文字 / 详细文字 / 文档/图像 / 结构化）
 2. `workflows/page/02-match-template.md` · 模板匹配
-3. `workflows/page/03-generate.md` · 生成 .vue + 数据模型
-4. `workflows/page/04-mock.md` · mock 配置
-5. `workflows/page/05-route.md` · 路由配置
+3. `workflows/page/03-generate.md` · 生成 `.vue` + 数据模型 → 写到 `<component_package>/src/views/`
+4. `workflows/page/04-mock.md` · **Step 0 探测 mock-server 接入** → 写到 `<component_package>/mock/`
+5. `workflows/page/05-route.md` · 路由写到 `<component_package>/src/router/static.js` 的 **MENU_ROUTES** 数组（不是 routes.js）
 6. `workflows/page/06-verify.md` · 浏览器验证
 
 ### 跨步耦合
 
-- 步骤 1 产出的 6 字段是步骤 2~5 的输入
+- 步骤 1 产出的 `intent_resolved` 是步骤 2~5 的输入
 - 步骤 2 匹配的模板是步骤 3 的骨架来源
-- 步骤 3 生成的接口路径是步骤 4 mock 的 URL
+- 步骤 3 生成的接口路径是步骤 4 mock 的 URL（必须**逐字对得上**，加接口一致性校验）
 - 步骤 5 路由是步骤 6 浏览器访问的入口
+- **步骤 3/4/5 的写入根目录都是 `component_package`**（来自 `project_detect_result`）
+
+### Mock 门控（v0.3 新增）
+
+- 若 `intent_resolved.apiMode == 'mock'`，**必须**跑完步骤 4，否则步骤 6 浏览器验证会出现 404
+- 步骤 3 自检清单加一条：**「apiMode=mock 时，必须先看 step4 mock 文件路径是否已规划」**
 
 **不允许跳步**（哪怕你觉得很简单）。
 

@@ -4,6 +4,72 @@
 
 ---
 
+## v0.3.0 · 2026-05-27 · 架构优化大改造
+
+### 背景
+
+用户反馈 5 个核心痛点（详见 `OPTIMIZATION_PLAN.md`）：
+1. 环境体检每次都跑太冗余，开发场景应默认跳过
+2. 需求确认缺乏按输入类型分流（文字/文档/结构化）
+3. Mock 接入没有探测与一键接入，写完跑不起来
+4. **页面写到了 Web 工程而不是组件工程**（违反框架文档明确规定，最严重）
+5. 路由没有同步到组件工程的 `static.js`
+
+### 重大变更（Breaking Changes）
+
+- ⚠️ `project_detect_result` 输出契约新增 3 个**强制字段**（`web_package` / `component_package` / `target_view_dir`），缺失会 STOP
+- ⚠️ `intent_resolved` 输出契约新增 `input_type` / `component_package` / `target_*` 字段；`intent.fields` 从字符串数组改为对象数组（含 `type` 字段）
+- ⚠️ `05-route.md` 写入文件从 `routes.js` 改为 `static.js`，写入位置从顶层 export default 改为 `MENU_ROUTES` 数组（path 不带前导 `/`）
+- ⚠️ 默认入口从 Phase 1 环境层 改为 Phase 2 工程层
+
+### 新增 (Added)
+
+- **R11 业务开发分层约束** (`rules/project-rules.md`)：业务页面/路由/mock 必须写在组件工程；含 Web 工程 / 组件工程的 5 项识别签名
+- **Monorepo 分层扫描** (`workflows/project/00-detect.md`)：解析 → 打分 → 反向引用 → 综合判定 → 用户确认 6 步法
+- **输入类型分流** (`workflows/page/01-confirm-intent.md`)：T1 简短文字 / T2 详细文字 / T3 文档图像 / T4 结构化 4 通道，各自对话脚本独立
+- **Mock 接入态探测** (`workflows/page/04-mock.md` Step 0)：三件探测（exports/deps/plugin）+ A/B/C 档一键接入向导
+- **字段类型 → Mock.js 模板智能映射表** (`workflows/page/04-mock.md` Step 4)：18 种字段类型对应模板
+- **接口一致性校验** (`workflows/page/04-mock.md` Step 7)：.vue URL ↔ .mock.ts URL 双向比对，缺啥自动补
+- **R11 合规校验** (`workflows/page/03-generate.md` 写入前 + `05-route.md` Step 7)：强制校验文件路径不在 Web 工程下
+- **`generated_urls` 跨步契约** (`workflows/page/03-generate.md` → `04-mock.md`)：03 产出 URL 清单，04 用它做一致性校验
+- **环境体检按需触发** (`workflows/00-orchestrator.md` Phase 1)：默认跳过；命令失败自动回流；用户可显式触发
+
+### 修正 (Fixed)
+
+- **路由文件名错误**：`workflows/page/05-route.md` 从 `routes.js` 改为 `static.js`（之前是错的，实际框架文件名）
+- **路由数据结构错误**：从顶层 `export default` 改为 `MENU_ROUTES` / `ROOT_ROUTES` 数组追加（之前是错的）
+- **MENU_ROUTES path 格式**：明确不带前导 `/`（之前误带）
+- **产出路径硬编码**：`workflows/page/03-generate.md` 从硬编码 `packages/examples/src/views/...` 改为 `intent_resolved.target_view_dir` 动态值（兼容用户的 `demo-web + demo-view` 项目）
+- **`page/01-confirm-intent.md` 路由模式表**：static 模式描述从 "在 `src/router/routes.js` 写死" 改为 "在【组件工程】`src/router/static.js` 的 MENU_ROUTES/ROOT_ROUTES 数组中追加"
+
+### 设计决策
+
+- **环境体检默认跳过 vs 主动跑**：选默认跳过 + 自动回流。理由：（1）90% 任务用户环境已就绪；（2）命令失败时回流诊断比预先体检更准确；（3）省 10 秒启动时间提升体验
+- **分层扫描 vs 用户手工指定**：选自动扫描 + 用户确认。理由：（1）自动扫描覆盖 80% 默认场景；（2）多组件工程时让用户选避免猜错；（3）反向引用是最强信号，能区分被 Web 工程引用的"业务组件包"和被其他组件包引用的"通用组件包"
+- **Mock 一键接入 vs 仅给文档**：选 A/B/C 档代劳。理由：（1）`@epframe/vite-plugin-mock-server` 接入步骤跨 3 个文件易出错；（2）A 档自动修复对用户最友好；（3）C 档降级 proxy 是兜底
+- **字段类型枚举 vs 自由文本**：选枚举 18 种。理由：（1）枚举可对应 Mock.js 模板自动生成；（2）覆盖业务场景 ≥ 95%；（3）超出枚举的字段降级 `@ctitle`
+- **R11 失败 STOP vs warning**：选 STOP。理由：（1）违反 R11 会导致生成结果不可用；（2）用户可能不知道框架文档规定；（3）强制重选比生成出错后返工成本低
+
+### 升级路径
+
+```bash
+# 推荐：完整升级
+npx epoint-f10code-gen@latest update
+
+# 老用户旧产物如何处理：
+# 1. 旧版生成的 .vue 文件无需重写（结构未变），但建议手动检查路径是否在组件工程下
+# 2. 旧版的 routes.js（如有）建议手动迁移到 static.js 的 MENU_ROUTES
+# 3. mock 文件未接入 mock-server 的工程，新版会自动探测并给一键接入向导
+```
+
+### v0.3 验证
+
+- ✓ `npx epoint-f10code-gen smoke`：11 项检查全 pass，skill 健康度满分
+- ✓ `node bin/cli.mjs validate references/docs/page-examples/base/list.vue`：合规
+- 待办：在用户 `demo-web + demo-view` 真实项目端到端回归（见 OPTIMIZATION_PLAN.md § P1 待办）
+
+---
+
 ## v0.2.0 · 2026-05-26 · npx 化改造
 
 ### 重大变更（Breaking Changes）

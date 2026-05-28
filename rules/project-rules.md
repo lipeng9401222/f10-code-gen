@@ -128,4 +128,51 @@ feat(examples): 新增标段(包)管理列表页
 
 ---
 
-_R1~R10 都没满足？跑 `workflows/update-rules.md` 看是规则缺失还是过时。_
+## R11 · ★ 业务开发分层约束（Web 工程 vs 组件工程）
+
+**来源**：`references/docs/getting-started/getting-started-write-page.md` + `references/docs/guides/guides-base-component-system.md` 框架两份核心文档明确规定。
+
+### 规则
+
+F10 组件化架构下，工程分两层，**职责严格分离**：
+
+| 层级 | 角色 | 职责 | 写哪些代码 |
+| --- | --- | --- | --- |
+| **Web 工程**（启动入口） | `demo-web` / `web-show` / `web-eva-plus` | 启动应用、整合组件包、全局配置、主题、构建部署 | **只**写 `setup.js` 引用组件包、`vite.config.js` 构建配置、`config.js` 全局参数 |
+| **组件工程**（业务开发） | `demo-view` / `examples` / `admin-components` / `xxx-views` | 业务页面、业务组件、路由、mock、业务 i18n | **所有** `.vue` 业务页面、`router/static.js` 业务路由、`mock/*.mock.ts`、业务组件、业务工具方法 |
+
+### 强制约束
+
+- ❌ **禁止**在 Web 工程的 `src/views/` 下创建任何**业务**页面
+- ❌ **禁止**在 Web 工程的 `src/router/static.js` 中追加任何**业务**路由（保留为骨架/空数组）
+- ❌ **禁止**在 Web 工程的 `mock/` 下写业务 mock 接口
+- ✅ **业务页面** → 组件工程 `src/views/<module>/<appName>/<appName>-list.vue`
+- ✅ **业务路由** → 组件工程 `src/router/static.js` 的 `MENU_ROUTES`（有授权）/ `ROOT_ROUTES`（无授权）数组
+- ✅ **业务 mock** → 组件工程 `mock/<module>/<appName>.mock.ts`（且 `package.json.exports` 暴露 `"./mock"`）
+
+### 识别 Web 工程 / 组件工程的特征签名
+
+**Web 工程**（命中 ≥ 2 项 = 是 Web 工程）：
+- `src/main.js` 存在（最强信号，组件包不会有 main.js）
+- `package.json` 的 `dependencies` 列了 `@epframe/eui-core`
+- `package.json` 的 `dependencies` 含**多个** `workspace:*` 包引用
+- `src/setup.js` 内含 `deps: [...]` 数组引入其他组件包
+- `vite.config.js` 中有 `extWebPlugin` / 启动模式相关插件
+
+**组件工程**（命中 ≥ 2 项 = 是组件工程）：
+- `src/index.js` 存在并 `export { setup }`
+- `package.json` 的 `peerDependencies`（不是 dependencies）列 `@epframe/eui-core`
+- `src/router/static.js` 存在且**以 `ROOT_ROUTES`/`MENU_ROUTES` 形式导出**
+- `package.json` 含 `"exports": { ".": {...}, "./style.css": ... }` 库模式
+- `vite.config.js` 含 `build.lib: { entry: 'src/index.js' }` 库构建配置
+- **被某个 Web 工程的 `src/setup.js` 中 import**（最强信号，需要反向扫）
+
+✓ 检验句：
+- [ ] 任何生成的 `.vue` 业务页面，绝对路径里**不出现** Web 工程目录名（如 `web-show` / `demo-web`）
+- [ ] 任何生成的路由记录，写入的是**组件工程**的 `src/router/static.js`
+- [ ] 任何生成的 mock 文件，落在**组件工程**的 `mock/` 目录下
+- [ ] 写完后，用 `grep -r "<新生成的 appName>" packages/<web 工程>/src/` 应返回 **0 行**
+
+---
+
+_R1~R11 都没满足？跑 `workflows/update-rules.md` 看是规则缺失还是过时。_

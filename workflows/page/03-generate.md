@@ -1,35 +1,65 @@
-# page/03-generate · 生成 .vue + 数据模型
+# page/03-generate · 生成 .vue + 数据模型（v0.3 · 强制写入组件工程）
 
 > **目的**：基于步骤 2 的 `template_picked`，把模板骨架"穿上"用户的 intent 字段，产出可运行的 .vue 文件。
+> **v0.3 升级**：产出路径**强制**取自 `intent_resolved.target_view_dir`（来自 Phase 2 的组件工程），违反 = 触发 R11。
 
 ---
 
 ## 输入
 
-- `intent_resolved`（来自步骤 1）
+- `intent_resolved`（来自步骤 1，**含 `target_view_dir` / `component_package`**）
 - `template_picked`（来自步骤 2）
 
 ---
 
-## 产出位置（监控当前模式）
+## 产出位置（v0.3 · 强制取自 intent_resolved.target_view_dir）
 
-### 模式 A · examples 包内零成本演示（**默认**）
+### 唯一路径来源
 
-监控目录：`packages/examples/src/views/demo/page/<module>/<appName>/`
+```
+target_view_dir = <intent_resolved.component_package>/src/views/<module>/<appName>/
+```
 
-文件清单：
-- `<appName>-list.vue`（主列表）
-- `<appName>-add.vue`（如果 `hasFormDialog`）
-- `<appName>-edit.vue`（如果 `hasEditDialog`）
-- `<appName>-detail.vue`（如果 `hasDetailDialog`）
+**禁止**：
+- ❌ 硬编码到 `packages/examples/src/views/demo/page/...`（旧默认路径，违反组件包通用性）
+- ❌ 写到 Web 工程的 `src/views/`（违反 R11，框架文档明确禁止）
 
-### 模式 B · 已有 web 工程内
+### 文件清单
 
-目录：`<workspace>/<webApp>/src/views/<module>/<appName>/`（同上文件结构）
+| 角色 | 路径 | 何时生成 |
+| --- | --- | --- |
+| 主列表 | `<target_view_dir><appName>-list.vue` | 总是生成 |
+| 新增弹窗 | `<target_view_dir><appName>-add.vue` | `intent.hasFormDialog` |
+| 编辑弹窗 | `<target_view_dir><appName>-edit.vue` | `intent.hasEditDialog` |
+| 详情弹窗 | `<target_view_dir><appName>-detail.vue` | `intent.hasDetailDialog` |
 
-### 模式 C · 全新工程
+### 写入前的强制校验
 
-`eui-cli ws/web` 完毕后回到模式 B。
+写入任何 `.vue` 之前，必须执行：
+
+```javascript
+// 伪代码
+function preWriteCheck(intent) {
+  // 1. component_package 不能为空
+  assert(intent.component_package, 'STOP: project/00-detect.md 没有产出 component_package');
+
+  // 2. target_view_dir 必须在 component_package 之下
+  assert(intent.target_view_dir.startsWith(intent.component_package),
+         'STOP: 目标目录不在组件工程之下，违反 R11');
+
+  // 3. target_view_dir 不能含 Web 工程目录名
+  const webPkgName = path.basename(intent.web_package || '');
+  assert(!intent.target_view_dir.includes(webPkgName),
+         `STOP: 目标目录包含 Web 工程名 ${webPkgName}，违反 R11`);
+
+  // 4. Mock 门控：apiMode=mock 必须先看 mock 文件路径已规划
+  if (intent.apiMode === 'mock') {
+    assert(intent.target_mock_dir, 'STOP: apiMode=mock 但 target_mock_dir 未规划');
+  }
+}
+```
+
+任一项 fail → STOP，提示用户回到 `project/00-detect.md` 重选组件工程。
 
 ---
 
@@ -310,26 +340,54 @@ const onSubmit = async () => {
 - edit 多 `props: rowGuid` + `onMounted` 拉数据填充
 - detail 移除提交按钮，所有 form-item 用 `disabled`
 
-### Step 6 · 写完后逐条自检
+### Step 6 · 写完后逐条自检（v0.3 加 R11 + Mock 门控 + 接口一致性）
 
 - [ ] R1~R10 (`rules/coding-standards.md`)
 - [ ] R1~R10 (`rules/data-model-rules.md`)
 - [ ] R1~R10 (`rules/component-usage-rules.md`)
 - [ ] R1~R10 (`rules/style-rules.md`)
+- [ ] **R11** (`rules/project-rules.md`) · 业务分层约束：
+  - [ ] 所有写入的 `.vue` 文件绝对路径以 `<component_package>/src/views/` 开头
+  - [ ] 绝对路径**不含** Web 工程目录名（如 `web-show` / `demo-web`）
+  - [ ] 路径里的 `<appName>` 部分和 `intent_resolved.appName` 一致
+- [ ] **Mock 门控**（apiMode=mock 时）：
+  - [ ] 已规划 `target_mock_dir` 且 step4 即将跑（或已跑）
+  - [ ] `.vue` 中 `useTableModel` / `useListModel` / `useTreeModel` / `Utils.request` 的 URL 都列入了 mock 接口清单
+- [ ] **接口一致性预声明**（给 step4 用）：把本步骤产出的所有 URL 收集到 `generated_urls` 列表中
 
 任一失败 → 回头修，**不要放过让用户自己发现**。
 
+### Step 7 · 产出接口 URL 清单（v0.3 新增 · 给 04-mock.md 校验用）
+
+写完 .vue 后，扫描所有 `useTableModel`/`useListModel`/`useTreeModel`/`Utils.request` 调用，提取 URL 列入：
+
+```yaml
+generated_urls:
+  - { url: '/api/<m>/<a>/list', usedBy: useTableModel, file: <list.vue 绝对路径>, line: <行号> }
+  - { url: '/api/<m>/<a>/info', usedBy: Utils.request, file: <edit.vue 绝对路径>, line: <行号> }
+  - { url: '/api/<m>/<a>/<field>Options', usedBy: useListModel, file: <list.vue 绝对路径>, line: <行号> }
+  - { url: '/api/<m>/<a>/tree', usedBy: useTreeModel, file: <list.vue 绝对路径>, line: <行号> }
+  - { url: '/api/<m>/<a>/add', usedBy: Utils.request, file: <add.vue 绝对路径>, line: <行号> }
+  - { url: '/api/<m>/<a>/update', usedBy: Utils.request, file: <edit.vue 绝对路径>, line: <行号> }
+  - { url: '/api/<m>/<a>/delete', usedBy: Utils.request, file: <list.vue 绝对路径>, line: <行号> }
+```
+
+这份清单**逐字传给** `04-mock.md` 做接口一致性校验。
+
 ---
 
-## 输出契约
+## 输出契约（v0.3 加 generated_urls）
 
 ```yaml
 generated_files:
-  - path: <绝对路径>
+  - path: <绝对路径>                     # 必须在 component_package 下
     role: list | add | edit | detail
     template_source: <来源模板路径>
     intent_fields_mapped: [<哪些 intent 字段被映射到了哪里>]
+generated_urls:                          # ★ v0.3 新增
+  - { url: <string>, usedBy: <string>, file: <string>, line: <int> }
 self_check_passed: <bool>
+r11_compliance: <bool>                   # ★ v0.3 新增·R11 业务分层校验
 ```
 
 ---
@@ -342,7 +400,10 @@ self_check_passed: <bool>
 - [ ] 表格 / 树 / 下拉**全部**通过 `model.<name>.data` 取数据，**没有**散装 `ref([])` + `requestAxios`
 - [ ] 没有 `<el-` 前缀（Element 残留）
 - [ ] 没有 `v-model:visible` / `v-model:open` 控制业务弹窗
+- [ ] **(v0.3)** 所有 .vue 绝对路径以 `<component_package>/src/views/` 开头，**不含** Web 工程目录名
+- [ ] **(v0.3)** apiMode=mock 时已产出 `generated_urls` 清单
+- [ ] **(v0.3)** 路径里的 `<appName>` 与 `intent_resolved.appName` 一致
 
 ---
 
-_步骤 3 完成 → 进 `04-mock.md`。_
+_步骤 3 完成 → 进 `04-mock.md`（apiMode=mock 必跑；apiMode=restful/proxy 跳过 mock 但仍要校验）。_

@@ -10,6 +10,26 @@ delegation: A  # 全自动
 
 ---
 
+## 何时跑本 workflow（v0.3 · 按需触发）
+
+**默认不主动跑**。`00-orchestrator.md` 已将默认入口改为 Phase 2 工程层。本 workflow 只在以下三种场景**被触发**：
+
+| # | 触发条件 | 触发方 |
+| --- | --- | --- |
+| ① | 用户显式说 "先做环境体检" / "check env" / "环境检查" / "想做下体检" | 用户 |
+| ② | 后续命令报错命中模式：`ENOENT` / `command not found` / `E401` / `E403` / `version mismatch` / `not found in registry` / `unable to resolve` | orchestrator 自动回流 |
+| ③ | `project/00-detect.md` 探测到关键依赖（Node / pnpm / eui-cli / nrm）二进制不存在 | project-detect 自动转入 |
+
+**收尾承诺**：本 workflow 跑完后，**自动回到调用方**（用户场景 → 询问下一步；自动回流场景 → 续跑失败的原命令），不在 env 层停留。
+
+### 与 Phase 2/3 的关系
+
+- 用户首次启动任务 → 直接走 Phase 2（不跑本 workflow）
+- 任意阶段命令报错 → 本 workflow → 修复 → **自动续跑原命令** → 回到原阶段
+- 体检完成后**不要再跑一遍**（避免重复诊断）
+
+---
+
 ## 5 项体检命令
 
 按序跑，记录每项结果（pass / fail）：
