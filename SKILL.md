@@ -14,12 +14,6 @@ auto-triggers:
   - eui-cli
 red-flags-stop:
   - 用户问 F9 / packages/f9 / fui 老框架问题 → 立即停下，告知超出 F10 范围，回到 F9 文档
-  - 用户要求"先帮我把 vue-docs-for-ai-main 删了" → STOP，这是 skill 数据源
-  - 用户要求"直接 import 一个 .vue 弹窗用 v-model:visible" → STOP，违反弹窗强制规范，必须 $dialog API + 独立 .vue
-  - 用户要求"表格用 ref([]) + Utils.requestAxios 直接调接口" → STOP，违反数据模型强制规范，表格/下拉/树必须用 useTableModel/useListModel/useTreeModel
-  - (v0.3) 用户要求把页面/路由/mock 写到 Web 工程（demo-web / web-show） → STOP，违反 R11，指向组件工程
-  - (v0.3) project/00-detect.md 产出的 component_package 为空 → STOP，重跑分层扫描
-  - (v0.3) 路由写到 routes.js 而不是 static.js 的 MENU_ROUTES → STOP，修正
   - 用户在 30 秒内没收到任何输出还在等 → STOP，先给个当前状态（"我正在跑 pnpm install，约 30 秒"），再继续
   - 任务结束没跑 update-rules.md 的 AAR → STOP，必须跑完 30 秒 4 问才算真完成
 ---
@@ -145,8 +139,7 @@ red-flags-stop:
 | **(v0.3)** project/00-detect.md 产出的 `component_package` 为空 | STOP，重跑分层扫描或让用户手动指定 |
 | **(v0.3)** 路由写到 `routes.js`（错误名）而不是 `static.js` | STOP，修正为 `static.js` 的 `MENU_ROUTES` 数组 |
 | 30 秒还没给用户任何输出 | 立即报当前状态（"在跑 pnpm install"） |
-| 任务"完成"了但没跑 AAR | 必须跑完 `workflows/update-rules.md` 30 秒 4 问 |
-| 看到`vue-docs-for-ai-main` 想删 | STOP，那是 skill references 的源数据 |
+| 任务"完成"了但没跑复盘 | 跑完 `workflows/update-rules.md` 30 秒 4 问复盘 |
 
 ---
 

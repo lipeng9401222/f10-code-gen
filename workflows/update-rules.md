@@ -116,11 +116,10 @@ _（v0.1.0 暂未沉淀，等真实任务后补充）_
 ### 全局 Red Flags
 
 1. 用户问 F9 / packages/f9 / fui 老框架问题 → 立即停下
-2. 用户要求"先帮我把 vue-docs-for-ai-main 删了" → STOP，这是 skill 数据源
-3. 用户要求内联 `<e-dialog v-model:visible>` 写业务弹窗 → STOP
-4. 用户要求 `ref([])` + `Utils.requestAxios` 给表格 → STOP
-5. 30 秒内没给用户输出还在等 → STOP，先报状态
-6. 任务结束没跑 AAR → STOP
+2. 用户要求内联 `<e-dialog v-model:visible>` 写业务弹窗 → STOP
+3. 用户要求 `ref([])` + `Utils.requestAxios` 给表格 → STOP
+4. 30 秒内没给用户输出还在等 → STOP，先报状态
+5. 任务结束没跑 AAR → STOP
 
 ### 规则相关 Red Flags
 

@@ -39,8 +39,7 @@ trigger: model_decision
 | 用户要求绕过 `defineDataModel` 直连接口 | 拒绝，指向 `epoint-f10code-gen/rules/data-model-rules.md` |
 | 用户要求内联 `<e-dialog v-model:visible>` 写业务弹窗 | 拒绝，指向 `references/docs/dialog-interaction.md` § 5 |
 | 30 秒还没给用户任何输出 | 立即报当前状态（"在跑 pnpm install"） |
-| 任务"完成"了但没跑 AAR | 必须跑完 `workflows/update-rules.md` 30 秒 4 问 |
-| 看到 `vue-docs-for-ai-main` 想删 | STOP，那是 skill references 的源数据 |
+| 任务"完成"了但没跑复盘 | 跑完 `workflows/update-rules.md` 30 秒 4 问复盘 |
 
 ---
 
