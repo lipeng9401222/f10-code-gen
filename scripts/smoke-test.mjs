@@ -9,10 +9,10 @@
  *   2. SKILL.md 行数 ≤ 200
  *   3. SKILL.md frontmatter 必备字段（description / primary / auto-triggers / red-flags-stop）
  *   4. rules/ 5 个文件全在
- *   5. workflows/ 关键文件全在（00-orchestrator + page/01~06 + env/* + project/* + update-rules + fix-bug）
+ *   5. workflows/ 关键文件全在（00-orchestrator + page/01~07 + env/* + project/* + update-rules + fix-bug）
  *   6. references/ 三份索引存在
  *   7. references/docs/ 有内容（说明 sync 跑过）
- *   8. templates/ 5 份骨架在
+ *   8. templates/ 6 份骨架在
  *   9. SKILL.md / rules / workflows 中没有占位符残留（仅 templates/*.tmpl 与白名单允许）
  *  10. installer/stubs/ 3 份 IDE 入口模板（cursor/claude/windsurf）+ README
  *  11. npx 入口（bin/cli.mjs + package.json 的 name / bin 字段）
@@ -129,6 +129,7 @@ async function main() {
     'page/04-mock.md',
     'page/05-route.md',
     'page/06-verify.md',
+    'page/07-api-doc.md',
     'env/00-detect.md',
     'env/01-node.md',
     'env/02-pnpm.md',
@@ -147,6 +148,47 @@ async function main() {
     const p = path.join(SKILL_ROOT, 'workflows', f);
     if (await exists(p)) ok(`workflows/${f}`);
     else fail(`缺失：workflows/${f}`);
+  }
+
+  // v0.4.1 trigger sanity: 触发描述层只保留 F10 / EUI 领域入口
+  console.log('\n[5b] v0.4.1 精简触发词 / 新流程');
+  try {
+    const skill = await readFile(path.join(SKILL_ROOT, 'SKILL.md'));
+    const fmMatch = skill.match(/^---\n([\s\S]+?)\n---/);
+    const fm = fmMatch ? fmMatch[1] : '';
+    const desc = (fm.match(/^description:\s*(.*)$/m) || [])[1] || '';
+    const auto = (fm.match(/^auto-triggers:\n([\s\S]*?)(?=^[a-z-]+:)/m) || [])[1] || '';
+    const triggerSurface = `${desc}\n${auto}`;
+    const expected = [
+      'F10',
+      'F10 框架',
+      'epoint F10',
+      'EUI',
+      'EUI4.0',
+      'EUI4',
+      'EUI Vue',
+      'eui-cli'
+    ];
+    for (const token of expected) {
+      if (fm.includes(token)) ok(`frontmatter 含 ${token}`);
+      else fail(`SKILL.md 缺 v0.4 触发/流程：${token}`);
+    }
+    const triggerForbidden = [
+      'ep-data-grid',
+      'defineDataModel',
+      'defineFrameModel',
+      'useTableModel',
+      '@epframe/eui-core',
+      '标段管理',
+      'page-examples',
+      '接口文档'
+    ];
+    for (const token of triggerForbidden) {
+      if (triggerSurface.includes(token)) fail(`description/auto-triggers 不应再包含细粒度触发词：${token}`);
+      else ok(`description/auto-triggers 已移除 ${token}`);
+    }
+  } catch (e) {
+    fail(e.message);
   }
 
   // ========== 6. references/ 三份索引 ==========
@@ -187,19 +229,28 @@ async function main() {
     }
   }
 
-  // ========== 8. templates/ 5 份 ==========
-  console.log('\n[8] templates/ 5 份骨架');
+  // ========== 8. templates/ 6 份 ==========
+  console.log('\n[8] templates/ 6 份骨架');
   const templateFiles = [
     'data-model/list-model.js.tmpl',
     'data-model/form-model.js.tmpl',
     'mock/crud.mock.ts.tmpl',
     'mock/tree-list.mock.ts.tmpl',
+    'mock/business-mock.middleware.mjs.tmpl',
     'route/static-route.js.tmpl'
   ];
   for (const f of templateFiles) {
     const p = path.join(SKILL_ROOT, 'templates', f);
     if (await exists(p)) ok(`templates/${f}`);
     else fail(`缺失：templates/${f}`);
+  }
+
+  // v0.4 新增 templates/api-doc/
+  console.log('\n[8b] templates/api-doc/ 接口文档骨架（v0.4）');
+  for (const f of ['markdown.md.tmpl', 'api.json.tmpl']) {
+    const p = path.join(SKILL_ROOT, 'templates', 'api-doc', f);
+    if (await exists(p)) ok(`templates/api-doc/${f}`);
+    else fail(`缺失：templates/api-doc/${f}`);
   }
 
   // ========== 9. 占位符残留检查（仅 templates/ 允许） ==========
@@ -223,6 +274,8 @@ async function main() {
         if (p.includes(path.join('references', 'docs'))) continue;
         if (p.includes(path.join('templates'))) continue;
         if (entry.name === 'node_modules') continue;
+        // v0.4 跳过测试用 fixture 与生成产物
+        if (entry.name === '__test-fixtures__') continue;
         await walk(p, fileCb);
       } else if (entry.isFile() && (entry.name.endsWith('.md') || entry.name.endsWith('.mjs'))) {
         await fileCb(p);
@@ -279,11 +332,26 @@ async function main() {
       }
       if (pkg.name) ok(`package.json · name = ${pkg.name}`);
       else fail('package.json 缺 name 字段');
+      if (pkg.version) ok(`package.json · version = ${pkg.version}`);
+      else fail('package.json 缺 version 字段');
     } catch (e) {
       fail(`package.json 解析失败：${e.message}`);
     }
   } else {
     fail('缺失：package.json（npm publish 必备）');
+  }
+
+  // ========== 12. v0.4 新增 CLI 子命令（gen-api-doc）==========
+  console.log('\n[12] v0.4 CLI 子命令');
+  const genApiDocScript = path.join(SKILL_ROOT, 'scripts', 'gen-api-doc.mjs');
+  if (await exists(genApiDocScript)) ok('scripts/gen-api-doc.mjs');
+  else fail('缺失：scripts/gen-api-doc.mjs（gen-api-doc CLI 主体）');
+  try {
+    const cli = await readFile(binCli);
+    if (cli.includes("case 'gen-api-doc'")) ok('bin/cli.mjs 已注册 gen-api-doc 子命令');
+    else fail('bin/cli.mjs 缺 gen-api-doc 子命令分支');
+  } catch (e) {
+    fail(`bin/cli.mjs 读取失败：${e.message}`);
   }
 
   // ========== 总结 ==========

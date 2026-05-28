@@ -236,4 +236,4 @@ warnings: [<string>]
 
 ---
 
-_步骤 5 完成 → 进 `06-verify.md`。_
+_步骤 5 完成 → 进 `07-api-doc.md`。_

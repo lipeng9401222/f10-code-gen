@@ -19,7 +19,7 @@
 #### Q1. 这次任务漏了什么规则？
 
 逐项扫描：
-- [ ] `rules/project-rules.md` R1~R10 都被尊重了吗？
+- [ ] `rules/project-rules.md` R1~R11 都被尊重了吗？
 - [ ] `rules/data-model-rules.md` 表格 / 树 / 下拉**都用 defineDataModel** 了吗？
 - [ ] `rules/component-usage-rules.md` 弹窗都用 `$dialog` API 了吗？没用内联 `<e-dialog>` 吗？
 - [ ] `rules/coding-standards.md` 用 `<script setup>` 了吗？import 在顶部了吗？
@@ -80,7 +80,7 @@ Q4. 改进：（无 / 具体行动项）
 
 更新清单：
 - [ ] gotchas.md 加入 #15 "Tab 内表格 lazy 配错"
-- [ ] page/04-mock.md 加 ✓ 检验句"method 必须 post"
+- [ ] page/04-mock.md 加 ✓ 检验句"业务中间件只拦截 /api/<module>/ 且 parseBody 兼容 form-encoded"
 ```
 
 如果 4 问全部"无" → 一句话也行：`AAR：本次无新发现，规则全遵守`。

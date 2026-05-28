@@ -1,32 +1,17 @@
 ---
 name: epoint-f10code-gen
-description: epoint F10 Vue 页面代码生成 skill。当用户提到 F10 / epoint Vue 框架 / 列表页 / 表单页 / 详情页 / ep-data-grid / ep-form / ep-layout-manager / 弹窗 / $dialog / defineDataModel / useTableModel / useTreeModel / useListModel / EpDataGrid / @epframe/eui-core / @epoint-fe/eui-components / eui-cli / 标段管理 / 标段(包) / 采购 / 招投标列表 / vue-docs / page-examples / typical / mock 配置 / 框架页面生成 / 模板匹配 / e-toolbar 工具栏 / e-tree 树 / e-tabs / 主页面+树+三弹窗 / 新建工程 / pnpm 私有源 / nrm epoint 等关键字时必须激活。即使用户没说"F10"，看到 ep-* / e-* / @epframe / @epoint-fe / fui-page / eui-page 类标签或包名，都要立刻触发本 skill。
-when-to-use: 用户描述需要生成 / 修改 / 排查 epoint F10 框架（Vue 9.5.4-sp1）页面、组件、mock、路由、工程的任务。包括：环境准备（node/pnpm/nrm/eui-cli）、工程创建（eui-cli ws/web/comp）、页面生成（列表/表单/详情/弹窗/树+列表）、bug 修复、规则更新。
+description: epoint F10 / EUI Vue 页面代码生成 skill。用于 F10 框架、EUI / EUI4.0 / EUI4、EUI Vue、eui-cli 相关任务。
+when-to-use: 用户描述需要生成 / 修改 / 排查 epoint F10 / EUI 框架页面、组件、mock、接口文档、路由、工程的任务。包括环境准备、工程创建、页面生成、bug 修复、规则更新。
 primary: true
 auto-triggers:
+  - F10
   - F10 框架
-  - epoint Vue
-  - ep-data-grid
-  - ep-layout-manager
-  - ep-form
-  - $dialog
-  - defineDataModel
-  - useTableModel
-  - useTreeModel
-  - useListModel
-  - "@epframe/eui-core"
-  - "@epoint-fe/eui-components"
+  - epoint F10
+  - EUI
+  - EUI4.0
+  - EUI4
+  - EUI Vue
   - eui-cli
-  - vue-docs
-  - page-examples
-  - typical 模板
-  - 列表页 + 树
-  - 标段管理
-  - 标段(包)
-  - 主页面+三弹窗
-  - F10 列表页
-  - F10 表单页
-  - F10 详情页
 red-flags-stop:
   - 用户问 F9 / packages/f9 / fui 老框架问题 → 立即停下，告知超出 F10 范围，回到 F9 文档
   - 用户要求"先帮我把 vue-docs-for-ai-main 删了" → STOP，这是 skill 数据源
@@ -91,8 +76,9 @@ red-flags-stop:
    - `workflows/page/01-confirm-intent.md` · **输入类型分流确认**（4 种：T1 简短文字 / T2 详细文字 / T3 文档图像 / T4 结构化）
    - `workflows/page/02-match-template.md` · 匹配 `references/examples-index.md` 中的 typical/* 模板
    - `workflows/page/03-generate.md` · 生成 `.vue` + 数据模型 → 写到 `<component_package>/src/views/`
-   - `workflows/page/04-mock.md` · **Step 0 探测 mock-server 接入态** → 一键接入向导 → 写 mock 到 `<component_package>/mock/`
+   - `workflows/page/04-mock.md` · **默认业务定向 mock 中间件** → 写 mock 到 `<component_package>/mock/`，仅拦截 `/api/<module>/`
    - `workflows/page/05-route.md` · 配静态路由 → 写到 `<component_package>/src/router/static.js` 的 **MENU_ROUTES** 数组（不是 routes.js）
+   - `workflows/page/07-api-doc.md` · 根据 `generated_urls` + mock + `intent.fields` 生成 Markdown + JSON 接口文档
    - `workflows/page/06-verify.md` · 浏览器验证 + 截图
 5. **闭环**：跑 `workflows/update-rules.md` AAR 30 秒 4 问
 
@@ -116,12 +102,13 @@ red-flags-stop:
 
 ### D. 查文档（不生成代码）
 
-触发关键字：**"e-button 怎么用"/"useTableModel 文档"/"ep-data-grid columns"**
+触发关键字：**"e-button 怎么用"/"useTableModel 文档"/"ep-data-grid columns"/"EUI4.0 样式"/"eui4 css vars"**
 
 执行：
 
 1. 读 `references/docs-index.md`，按关键字找到 `references/docs/<对应分类>/<具体文件>.md`
-2. 直接给链接 + 关键 API 摘要，**不要自己凭记忆**
+2. EUI4 样式 / CSS 变量优先读 `references/docs/common/ai/eui4-utility-classes.md` 与 `references/docs/common/ai/eui4-css-vars.md`
+3. 直接给链接 + 关键 API 摘要，**不要自己凭记忆**
 
 ### E. 查模板（"列表页树状表格怎么写"）
 
@@ -141,7 +128,9 @@ red-flags-stop:
 
 ## Auto-Triggers 最高优先级 6 类
 
-完整清单在 frontmatter `auto-triggers:`。**看到以下任一个立即激活**：`ep-data-grid` / `ep-layout-manager` / `ep-form` 标签、`defineDataModel` / `useTableModel` / `useTreeModel` / `useListModel` hook、`@epframe/eui-core` 或 `@epoint-fe/eui-components` import、`eui-cli` 子命令、`vue-docs` / `page-examples` / `typical` 路径、"F10 列表/表单/详情/弹窗" 短语。
+完整清单在 frontmatter `auto-triggers:`。**触发层只保留领域入口**：`F10` / `F10 框架` / `epoint F10` / `EUI` / `EUI4.0` / `EUI4` / `EUI Vue` / `eui-cli`。
+
+触发后再由上面的 Common Tasks 路由表处理组件、Hook、模板、mock、接口文档、业务页面等细节，避免把 metadata 维护成关键字堆。
 
 ---
 
@@ -165,7 +154,7 @@ red-flags-stop:
 
 详见 `workflows/00-orchestrator.md`。简版：
 - **默认入口 · Phase 2 工程层**（`project/00-detect.md` · 分层扫描 → 识别 Web 工程 + 组件工程 → 确认目标组件工程）
-- **Phase 3 页面层**（`page/01~06` 全跑，全部产出到组件工程）
+- **Phase 3 页面层**（`page/01~07` 全跑，全部产出到组件工程）
 - **Phase 1 环境层**（按需触发，默认跳过；仅在用户显式要求 / 命令执行失败时自动回流）
 - **闭环**（`workflows/update-rules.md` AAR 30 秒 4 问）。
 

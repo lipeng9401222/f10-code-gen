@@ -1,6 +1,6 @@
 {
   "name": "epoint-f10code-gen",
-  "version": "0.1.0",
+  "version": "0.4.0",
   "description": "epoint F10 Vue 框架页面代码生成 skill（rules + workflows + references + IDE 入口模板）",
   "type": "module",
   "bin": {
@@ -24,6 +24,7 @@
   "scripts": {
     "smoke": "node scripts/smoke-test.mjs",
     "validate": "node scripts/validate-page.mjs",
+    "gen-api-doc": "node bin/cli.mjs gen-api-doc",
     "sync": "node scripts/sync-from-docs.mjs",
     "init": "node bin/cli.mjs init",
     "check": "node bin/cli.mjs check"

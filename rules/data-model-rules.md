@@ -229,5 +229,97 @@ v-model:selectedRowKeys="model.selectedRowKeys"
 
 ---
 
-_违反 R1~R10 任一 → 必出"表格不刷新 / 树不显示 / 搜索失效"等典型 bug。_
+## R11 · 所有页面类型都必须产出 `model` 根对象（v0.4 全页面通用化）
+
+来源：真实 AAR · 看板页面白屏（详见 `references/gotchas.md` G013）。看板、指标卡、统计页、dashboard、kanban、metric 等页面即使没有表格 / 树 / 下拉，也必须使用 `Utils.defineDataModel`（或 `Utils.defineFrameModel`）统一声明页面数据与加载状态。
+
+> **v0.4 升级**：本规则从 dashboard 专属约束扩展为全页面通用约束，并配套 `scripts/validate-page.mjs` 的 4 条静态校验（DM-R11.1 ~ DM-R11.4）。文档依据：`references/docs/getting-started/getting-started-use-data-model.md`。
+
+### `defineDataModel` 与 `defineFrameModel` 的区分
+
+两者在 R11 校验中**等价合法**：
+
+| API | 何时用 | 区别 |
+| --- | --- | --- |
+| `Utils.defineDataModel` | 主流页面（含表格 / 表单 / 树 / 看板） | 完整数据模型，可声明 `models: {}` 子模型 |
+| `Utils.defineFrameModel` | 页面结构特殊不需要子模型，但仍要享用框架的 `getPageConfig` / `getApiSecurityConfig` 自动请求 | 省去 `models`；同样返回 `global.state` / `global.pageConfig` |
+
+### 必须（其一）
+
+```js
+const { createSubModel, PageConfig, request } = Utils;
+
+const model = Utils.defineDataModel(() => {
+  const dashboardData = createSubModel(
+    { total: 0, items: [] },
+    {
+      refresh: async () => {
+        const res = await request({ url: '/api/demo/dashboard/data', data: { params: {} } });
+        if (res) Object.assign(dashboardData.data, res.data || res);
+      },
+      lazy: false
+    }
+  );
+
+  return {
+    global: { pageConfig: new PageConfig({}) },
+    models: { dashboardData }
+  };
+});
+
+onMounted(() => {
+  model.methods.initData();
+});
+```
+
+或（页面结构特殊，无业务子模型时）：
+
+```js
+const model = Utils.defineFrameModel({
+  pageConfig: new PageConfig({})
+});
+
+onMounted(() => {
+  model.methods.initData();
+});
+```
+
+### 禁止
+
+```js
+// ❌ 主数据散装 ref + onMounted 手动 request，template 又引用 model.xxx
+const dashboardData = ref({});
+const loadDashboard = async () => {
+  const res = await Utils.request({ url: '/api/dashboard/data' });
+  dashboardData.value = res;
+};
+onMounted(loadDashboard);
+// 模板里写 v-loading="model.global.state.loading" → model 未定义 → 白屏
+```
+
+### R11 静态校验子规则（由 `scripts/validate-page.mjs` 强制执行）
+
+| 子规则 | 触发条件 | 类型 | 失败修复 |
+| --- | --- | --- | --- |
+| **DM-R11.1** 模板 `model.` 引用必须有数据模型声明 | 模板含 `\bmodel\.[a-zA-Z_$]` 且**非** `:model="..."` 形式 | error | script 必须有 `Utils.(defineDataModel\|defineFrameModel)(...)` |
+| **DM-R11.2** 数据模型必须 onMounted 初始化 | script 含 `defineDataModel` 或 `defineFrameModel` | error | 必须有 `model.methods.initData(`（带/不带参数皆可） |
+| **DM-R11.3** 主数据禁止散装 ref + onMounted request | 三特征同时命中：① 顶层 `ref({...})` / `ref([...])`，② `onMounted` 内直接 `request/requestAxios/restfulAxios`，③ **没有** `defineDataModel`/`defineFrameModel` | error | 主数据加载必须走 `useTableModel` / `useListModel` / `useTreeModel` / `createSubModel` |
+| **DM-R11.4** 引用 `pageConfig` 字段时必须实例化 | 模板或 script 含 `model.global.pageConfig.` 或 `model.pageConfig.`（仅 `model.global.state.loading` **不**触发） | error | `defineDataModel` 的 `global` 中必须有 `pageConfig: new PageConfig({...})`，否则字段为 `undefined` |
+
+### 关键修正（v0.3 → v0.4）
+
+| 旧版 | 新版 |
+| --- | --- |
+| ❌ 出现 `v-loading="model.global..."` 必须有 `global.pageConfig`（错，pageConfig 是可选项） | ✅ DM-R11.4 改为：仅当真正读取 `model.global.pageConfig.xxx` 时才校验 |
+| ❌ 仅 dashboard / kanban / metric 触发检查 | ✅ 全页面通用，凡模板用 `model.` 即触发 |
+| ❌ 仅识别 `defineDataModel` | ✅ `defineDataModel` 与 `defineFrameModel` 等价合法 |
+| ❌ `<el-form :model="formData">` 也会触发误报 | ✅ 正则用 `\bmodel\.` 区分，避免误命中 prop |
+
+### ✓ 检验句
+
+模板中出现 `model.` 时，script 中必须有 `const model = Utils.defineDataModel(...)` 或 `const model = Utils.defineFrameModel(...)`，且必须在 `onMounted` 中调用 `model.methods.initData()`。主数据加载（表格 / 树 / 下拉 / 看板主体数据）禁止用散装 `ref + onMounted + request` 三件套。
+
+---
+
+_违反 R1~R11 任一 → 必出"表格不刷新 / 树不显示 / 搜索失效 / 页面白屏"等典型 bug。_
 _遇到这些症状先回查本文件而不是改组件代码。_

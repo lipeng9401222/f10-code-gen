@@ -21,8 +21,9 @@
    page/01-confirm-intent.md  →  按输入类型分流（4 种）
    page/02-match-template.md
    page/03-generate.md         →  写入【组件工程】(不是 Web 工程)
-   page/04-mock.md             →  Step 0 探测 mock-server 接入态
+   page/04-mock.md             →  默认业务定向 mock 中间件（只拦截 /api/<module>/）
    page/05-route.md            →  写入【组件工程】static.js MENU_ROUTES
+   page/07-api-doc.md          →  根据 mock 生成 Markdown + JSON 接口文档
    page/06-verify.md
    │
    ▼
@@ -63,7 +64,7 @@
 我准备帮你生成 F10 页面，3 步搞定：
 1. 工程定位（识别 Web 工程 + 组件工程，约 3 秒）
 2. 需求确认（按你给的描述类型分流：简短文字 / 详细文字 / 文档 / 结构化）
-3. 生成 .vue + mock + 路由（产出到【组件工程】）
+3. 生成 .vue + mock + 路由 + 接口文档（产出到【组件工程】）
 
 环境体检已默认跳过（命令报错会自动回流诊断）；如你想先做体检，回复"先体检"。
 
@@ -156,28 +157,30 @@ target_view_dir:       # = <component_package>/src/views/<module>/<appName>/
 
 ## Phase 3 · 页面层
 
-**目的**：6 步完成 .vue + mock + 路由生成，**全部写入组件工程**（违反 = 触发 R11）。
+**目的**：7 步完成 .vue + mock + 路由 + 接口文档生成，**全部写入组件工程**（违反 = 触发 R11）。
 
 ### 触发顺序（**严格按序**）
 
 1. `workflows/page/01-confirm-intent.md` · **输入类型分流确认**（4 种：简短文字 / 详细文字 / 文档/图像 / 结构化）
 2. `workflows/page/02-match-template.md` · 模板匹配
 3. `workflows/page/03-generate.md` · 生成 `.vue` + 数据模型 → 写到 `<component_package>/src/views/`
-4. `workflows/page/04-mock.md` · **Step 0 探测 mock-server 接入** → 写到 `<component_package>/mock/`
+4. `workflows/page/04-mock.md` · **默认业务定向 mock 中间件** → 写到 `<component_package>/mock/`，仅拦截 `/api/<module>/`
 5. `workflows/page/05-route.md` · 路由写到 `<component_package>/src/router/static.js` 的 **MENU_ROUTES** 数组（不是 routes.js）
-6. `workflows/page/06-verify.md` · 浏览器验证
+6. `workflows/page/07-api-doc.md` · 根据 `generated_urls` + mock handlers + `intent.fields` 生成 Markdown + JSON 接口文档
+7. `workflows/page/06-verify.md` · 浏览器验证
 
 ### 跨步耦合
 
-- 步骤 1 产出的 `intent_resolved` 是步骤 2~5 的输入
+- 步骤 1 产出的 `intent_resolved` 是步骤 2~7 的输入
 - 步骤 2 匹配的模板是步骤 3 的骨架来源
 - 步骤 3 生成的接口路径是步骤 4 mock 的 URL（必须**逐字对得上**，加接口一致性校验）
-- 步骤 5 路由是步骤 6 浏览器访问的入口
-- **步骤 3/4/5 的写入根目录都是 `component_package`**（来自 `project_detect_result`）
+- 步骤 5 路由是步骤 7 浏览器访问的入口
+- 步骤 6 接口文档依赖步骤 3 的 `generated_urls`、步骤 4 的 `mock_generated`、步骤 1 的 `intent.fields`
+- **步骤 3/4/5/6 的业务产物根目录都是 `component_package`**（来自 `project_detect_result`；Web 工程只允许写 mock 接入中间件）
 
 ### Mock 门控（v0.3 新增）
 
-- 若 `intent_resolved.apiMode == 'mock'`，**必须**跑完步骤 4，否则步骤 6 浏览器验证会出现 404
+- 若 `intent_resolved.apiMode == 'mock'`，**必须**跑完步骤 4，否则步骤 7 浏览器验证会出现 404
 - 步骤 3 自检清单加一条：**「apiMode=mock 时，必须先看 step4 mock 文件路径是否已规划」**
 
 **不允许跳步**（哪怕你觉得很简单）。

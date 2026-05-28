@@ -16,6 +16,7 @@
  *   npx epoint-f10code-gen update                # 重新同步主体（保留入口不动）
  *   npx epoint-f10code-gen smoke                 # 跑 skill 自身健康检查
  *   npx epoint-f10code-gen validate <vue-file>   # 校验生成的 .vue 是否合规
+ *   npx epoint-f10code-gen gen-api-doc <mock-file> # 根据 mock 反推接口文档（Markdown + JSON）
  *   npx epoint-f10code-gen sync                  # 同步 vue-docs → references/docs/
  *
  * 跨平台、零依赖（仅 Node.js 内置模块）。
@@ -149,6 +150,7 @@ function printHelp() {
   update                重新同步主体（保留入口不动）
   smoke                 跑 skill 自身健康检查
   validate <vue-file>   校验生成的 .vue 文件是否合规
+  gen-api-doc <mock-file> 根据 mock 文件反推接口文档（Markdown + JSON）
   sync                  同步官方 vue-docs → references/docs/
 
 通用选项:
@@ -160,11 +162,17 @@ function printHelp() {
   --force               覆盖时跳过 .bak 备份
   --help / -h           本帮助
 
+gen-api-doc 选项:
+  --out-dir <dir>       输出目录（默认推断 <component_package>/docs/api/<module>/）
+  --module <name>       模块名（默认从 mock 路径反推）
+  --app-name <name>     应用名（默认从 mock 文件名反推）
+
 示例:
   npx epoint-f10code-gen init
   npx epoint-f10code-gen init --ide cursor,windsurf --dry-run
   npx epoint-f10code-gen check
   npx epoint-f10code-gen validate ./packages/examples/src/views/demo/bid-mgmt.vue
+  npx epoint-f10code-gen gen-api-doc ./packages/examples/mock/demo/order.mock.ts
 `);
 }
 
@@ -408,6 +416,22 @@ async function cmdSync() {
   return runChildScript('scripts/sync-from-docs.mjs');
 }
 
+async function cmdGenApiDoc(opts) {
+  if (opts.positional.length === 0) {
+    console.error('用法: npx epoint-f10code-gen gen-api-doc <mock-file> [--out-dir <dir>] [--module <name>] [--app-name <name>]');
+    return 1;
+  }
+  // 透传 positional + 已知 options（--out-dir / --module / --app-name）
+  const passthroughArgs = [opts.positional[0]];
+  for (const flag of ['out-dir', 'module', 'app-name']) {
+    const idx = process.argv.indexOf(`--${flag}`);
+    if (idx >= 0 && process.argv[idx + 1]) {
+      passthroughArgs.push(`--${flag}`, process.argv[idx + 1]);
+    }
+  }
+  return runChildScript('scripts/gen-api-doc.mjs', passthroughArgs);
+}
+
 // ========== Entry ==========
 async function main() {
   const opts = parseArgs(process.argv);
@@ -428,6 +452,8 @@ async function main() {
       return cmdValidate(opts);
     case 'sync':
       return cmdSync();
+    case 'gen-api-doc':
+      return cmdGenApiDoc(opts);
     default:
       console.error(`未知命令: ${opts.command}`);
       console.error('跑 `npx epoint-f10code-gen --help` 查看可用命令');

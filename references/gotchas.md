@@ -507,6 +507,139 @@ v-model:selectedRowKeys="model.selectedRowKeys"
 
 ---
 
+## G013 · Dashboard / 看板绕过 defineDataModel 导致 model 未定义
+
+### 现象
+页面白屏，控制台报错：
+```
+TypeError: Cannot read properties of undefined (reading 'global')
+```
+常见触发点是模板写了 `v-loading="model.global.state.loading"`，但 `<script setup>` 里没有声明 `const model = Utils.defineDataModel(...)`。
+
+### 根因
+生成看板 / dashboard / metric 页面时误以为“没有表格就不用数据模型”，于是使用散装 `ref()` + `onMounted()` 请求数据；但 F10 页面骨架和 loading 状态仍依赖 `model.global`。
+
+### 修复
+
+```js
+const { createSubModel, PageConfig, request } = Utils;
+
+const model = Utils.defineDataModel(() => {
+  const dashboardData = createSubModel({ total: 0, items: [] }, {
+    refresh: async () => {
+      const res = await request({ url: '/api/demo/dashboard/data', data: { params: {} } });
+      if (res) Object.assign(dashboardData.data, res.data || res);
+    },
+    lazy: false
+  });
+
+  return {
+    global: { pageConfig: new PageConfig({}) },
+    models: { dashboardData }
+  };
+});
+
+onMounted(() => {
+  model.methods.initData();
+});
+```
+
+### 关键点
+所有页面类型都必须产出 `model` 根对象；看板主数据用 `createSubModel`，模板访问 `model.dashboardData.data.xxx`。
+
+> **v0.4 补充**：`Utils.defineFrameModel` 与 `Utils.defineDataModel` 在数据模型规则中**等价合法**。如果页面结构特殊（无业务子模型）但仍需 `getPageConfig` / `getApiSecurityConfig` 自动请求，可用 `defineFrameModel` 替代。详见 `rules/data-model-rules.md` R11 与 `references/docs/getting-started/getting-started-use-data-model.md` § defineFrameModel。
+
+### 来源
+真实 AAR · 看板页面绕过 `defineDataModel` 导致白屏
+
+---
+
+## G014 · mockServerPlugin 误拦框架端点导致启动白屏
+
+### 现象
+业务页面还没进入业务接口就白屏，终端或网络面板出现框架端点 404，例如：
+```
+/resourceaction/getSysBoot
+/auth/getAuthExpressions
+/themedataaction/getThemeConfig
+/themedataaction/getVueMenu
+/api/v1/framevariable/getPageConfig
+/apisecurityconfig/getApiSecurityConfig
+```
+
+### 根因
+`mockServerPlugin` 按 `apiPrefix` 接管请求后，未匹配的 handler 返回 404，而不是自动放行给 Vite proxy。F10 主题 / 菜单 / 权限等框架端点数据结构复杂，手写简化 mock 容易缺字段。
+
+### 修复
+
+默认使用业务定向 mock 中间件，只拦截当前模块业务接口：
+
+```js
+function createBusinessMockMiddleware() {
+  return {
+    name: 'business-mock-middleware',
+    configureServer(server) {
+      server.middlewares.use((req, res, next) => {
+        if (!req.url?.includes('/api/<module>/')) return next();
+        // 只处理 /api/<module>/，其他框架端点放行给 proxy
+      });
+    }
+  };
+}
+```
+
+### 关键点
+不要为框架端点补简化 mock；默认策略是让框架端点继续走宿主 proxy / 官方 mock 服务。
+
+### 来源
+真实 AAR · `mockServerPlugin` 全前缀接管误拦 F10 框架端点
+
+---
+
+## G015 · F10 请求体是 form-encoded 导致 mock 解析失败
+
+### 现象
+业务 mock 中间件报解析错误：
+```
+SyntaxError: Unexpected token 'v', "viewstate=..." is not valid JSON
+```
+
+### 根因
+F10 的 `Utils.request` / `requestAxios` 场景可能使用 `application/x-www-form-urlencoded`，请求体形如 `viewstate=xxx&params=yyy`，不能直接 `JSON.parse(body)`。
+
+### 修复
+
+```js
+function parseBody(body = '') {
+  if (!body) return {};
+  try {
+    return JSON.parse(body);
+  } catch {
+    const data = {};
+    for (const pair of body.split('&')) {
+      const [rawKey, rawValue = ''] = pair.split('=');
+      if (!rawKey) continue;
+      const key = decodeURIComponent(rawKey);
+      const value = decodeURIComponent(rawValue.replace(/\+/g, ' '));
+      data[key] = value;
+    }
+    if (typeof data.params === 'string') {
+      try { data.params = JSON.parse(data.params); } catch { /* keep string */ }
+    }
+    return data;
+  }
+}
+```
+
+### 关键点
+业务 mock 中间件必须同时支持 JSON 与 form-encoded；接口文档也要注明请求体兼容这两种格式。
+
+### 来源
+### 来源
+真实 AAR · F10 form-encoded 请求体导致 mock 解析失败；`references/docs/api/api-utilities-request.md` 请求方法对比
+
+---
+
 ## 模板（新坑点用）
 
 ### G0XX · <一句话标题>

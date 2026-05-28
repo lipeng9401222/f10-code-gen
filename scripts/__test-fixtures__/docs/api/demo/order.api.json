@@ -1,0 +1,140 @@
+{
+  "module": "demo",
+  "appName": "order",
+  "basePath": "/api/demo/order",
+  "bodyParser": "json_and_form_encoded",
+  "generationMode": "standalone",
+  "generatedAt": "2026-05-28 06:35:23",
+  "fieldCoverage": {
+    "total": 8,
+    "withDesc": 0,
+    "generatedDesc": 8,
+    "percent": 0
+  },
+  "fields": [
+    {
+      "name": "name",
+      "label": "名称",
+      "type": "text",
+      "required": false,
+      "desc": "名称（待后端确认）",
+      "descSource": "generated",
+      "options": [],
+      "example": "<text>"
+    },
+    {
+      "name": "amount",
+      "label": "金额",
+      "type": "amount",
+      "required": false,
+      "desc": "金额（待后端确认）",
+      "descSource": "generated",
+      "options": [],
+      "example": 0
+    },
+    {
+      "name": "status",
+      "label": "状态",
+      "type": "enum",
+      "required": false,
+      "desc": "状态（待后端确认）",
+      "descSource": "generated",
+      "options": [],
+      "example": "<enum>"
+    },
+    {
+      "name": "customerName",
+      "label": "名称",
+      "type": "text",
+      "required": false,
+      "desc": "名称（待后端确认）",
+      "descSource": "generated",
+      "options": [],
+      "example": "<text>"
+    },
+    {
+      "name": "customerPhone",
+      "label": "电话",
+      "type": "phone",
+      "required": false,
+      "desc": "电话（待后端确认）",
+      "descSource": "generated",
+      "options": [],
+      "example": "13900000000"
+    },
+    {
+      "name": "createTime",
+      "label": "时间",
+      "type": "datetime",
+      "required": false,
+      "desc": "时间（待后端确认）",
+      "descSource": "generated",
+      "options": [],
+      "example": "2026-05-28 12:00:00"
+    },
+    {
+      "name": "remark",
+      "label": "备注",
+      "type": "text",
+      "required": false,
+      "desc": "备注（待后端确认）",
+      "descSource": "generated",
+      "options": [],
+      "example": "<text>"
+    },
+    {
+      "name": "id",
+      "label": "主键",
+      "type": "id",
+      "required": false,
+      "desc": "主键（待后端确认）",
+      "descSource": "generated",
+      "options": [],
+      "example": "<id>"
+    }
+  ],
+  "interfaces": [
+    {
+      "method": "post",
+      "url": "/api/demo/order/list",
+      "name": "分页列表",
+      "requestSchema": "list",
+      "responseSchema": "pagedList"
+    },
+    {
+      "method": "post",
+      "url": "/api/demo/order/info",
+      "name": "详情",
+      "requestSchema": "idOnly",
+      "responseSchema": "item"
+    },
+    {
+      "method": "post",
+      "url": "/api/demo/order/add",
+      "name": "新增",
+      "requestSchema": "fields",
+      "responseSchema": "success"
+    },
+    {
+      "method": "post",
+      "url": "/api/demo/order/update",
+      "name": "更新",
+      "requestSchema": "idAndFields",
+      "responseSchema": "success"
+    },
+    {
+      "method": "post",
+      "url": "/api/demo/order/delete",
+      "name": "删除",
+      "requestSchema": "idOnly",
+      "responseSchema": "success"
+    },
+    {
+      "method": "post",
+      "url": "/api/demo/order/statusOptions",
+      "name": "选项数据",
+      "requestSchema": "optional",
+      "responseSchema": "options"
+    }
+  ]
+}

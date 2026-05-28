@@ -4,6 +4,101 @@
 
 ---
 
+## v0.4.1 · 2026-05-28 · 触发描述瘦身
+
+### 背景
+
+用户反馈 `description` / `auto-triggers` 已堆叠过多组件、Hook、业务词、模板词和接口文档词，触发描述变重且容易漂移。
+
+### 修改 (Changed)
+
+- **触发层收敛**：`SKILL.md` frontmatter 只保留 `F10` / `F10 框架` / `epoint F10` / `EUI` / `EUI4.0` / `EUI4` / `EUI Vue` / `eui-cli`
+- **IDE 入口同步精简**：Cursor / Claude Code / Windsurf 入口的描述和 Auto-Triggers 摘要改为 `F10` / `EUI` / `eui-cli` 三类
+- **smoke 检查调整**：`scripts/smoke-test.mjs` 改为检查 `description` / `auto-triggers` 核心触发词，并确保组件、Hook、业务词、模板词不再留在触发描述层
+
+### 设计决策
+
+- 组件名、Hook、业务术语、模板路径、接口文档等细节仍保留在正文 rules / workflows / gotchas 中；触发后由 Common Tasks 路由表处理
+- `eui-cli` 继续保留为触发词，因为它是 F10/EUI 工程创建与环境流程入口
+
+### 验证
+
+- 待跑：`node --check scripts/smoke-test.mjs`
+- 待跑：`node scripts/smoke-test.mjs`
+
+---
+
+## v0.4.0 · 2026-05-28 · 真实 AAR 闭环补强 + 用户反馈二次迭代
+
+### 背景
+
+真实落地反馈暴露 4 类问题：
+1. Dashboard 页面绕过 `defineDataModel`，模板引用 `model.global` 导致白屏
+2. `mockServerPlugin` 全前缀接管后误拦 F10 框架端点，未匹配 handler 返回 404
+3. 手写框架端点 mock 缺字段，主题 / 菜单解析失败
+4. 业务 mock 中间件只按 JSON 解析请求体，遇到 F10 form-encoded 请求失败
+
+用户在 v0.4 首版上线后反馈：
+- EUI4.0 触发词覆盖不全（缺 `EUI 4.0`/`eui-4`/`eui4` 等变体），实际场景里多次错过激活
+- 真实 AAR 暴露的坑点应当上升为 skill 通用约束，不仅仅是 dashboard 专属
+- 缺少独立的"根据 mock 反推接口文档"CLI，老项目无法直接享受新功能
+
+### 新增 (Added)
+
+- **EUI4.0 触发词**：`SKILL.md` + 3 个 IDE 入口模板补全 9+ 变体：`EUI4.0` / `EUI 4.0` / `EUI4` / `EUI 4` / `eui 4` / `eui-4` / `eui-4.0` / `eui4` / `EUI Vue` / `defineFrameModel` / `eui4 utility classes` / `eui4 css vars`
+- **接口文档工作流**：新增 `workflows/page/07-api-doc.md`，in-flow 模式根据 `generated_urls` + mock + `intent.fields` 生成 Markdown + JSON
+- **`gen-api-doc` 独立 CLI**：新增 `bin/cli.mjs gen-api-doc <mock-file>` 子命令 + `scripts/gen-api-doc.mjs`（约 320 行）+ `templates/api-doc/{markdown.md,api.json}.tmpl`，支持对老项目 standalone 反推接口文档
+- **业务 mock 中间件模板**：新增 `templates/mock/business-mock.middleware.mjs.tmpl`，内置 JSON + form-encoded 双解
+- **字段契约**：`workflows/page/01-confirm-intent.md` 明确 `intent.fields` 推荐结构：`name` / `label` / `type` / `required` / `desc` / `options` / `example`
+- **真实坑点沉淀**：`references/gotchas.md` 新增 G013~G015（来源标注"真实 AAR · <场景>"）；G013 补 `defineFrameModel` 等价说明
+- **EUI4 文档索引**：`references/docs-index.md` 增加 EUI4 utility classes 与 CSS vars 入口
+- **回归 fixtures**：`scripts/__test-fixtures__/` 新增 4 个 .vue（DM-R11 子规则正反例）+ 1 个 .mock.ts（gen-api-doc 端到端样本）
+
+### 修改 (Changed)
+
+- **页面层流程扩展为 7 步**：`00-orchestrator.md` 将流程调整为 `.vue → mock → route → api doc → verify`（07 在 06 之前）
+- **Mock 默认策略调整**：`page/04-mock.md` 从"优先接入 `mockServerPlugin`"改为默认"业务定向 Vite 中间件"，仅拦截 `/api/<module>/`
+- **数据模型规则升级（用户反馈后二次迭代）**：`rules/data-model-rules.md` R11 从 dashboard 专属约束**扩展为全页面通用约束**，配套 `validate-page.mjs` 4 条静态校验：
+  - DM-R11.1 模板 `model.` 引用必须有 `defineDataModel` 或 `defineFrameModel`（`defineFrameModel` 与 `defineDataModel` 等价合法）
+  - DM-R11.2 数据模型必须 onMounted + `initData()`（兼容带/不带参数）
+  - DM-R11.3 主数据禁止散装 `ref + onMounted + request`（三特征同时命中才报，避免误报局部 UI 状态）
+  - DM-R11.4 引用 `model.global.pageConfig.xxx` / `model.pageConfig.xxx` 时必须实例化 `new PageConfig`（基于文档：pageConfig 是可选项，仅引用时才校验）
+- **Web/组件边界补充**：`rules/project-rules.md` 明确 Web 工程可放 mock 接入中间件，但业务 mock 定义仍属于组件工程
+- **页面校验加固为强制 gate**：`scripts/validate-page.mjs` 整体重写（以 SFC 拆分 + 谓词函数 + 括号配对解析为核心）；`workflows/page/03-generate.md` Step 6.0 把 `validate-page.mjs` 提升为生成完成后的强制 gate（violations > 0 → STOP）
+- **smoke 检查增强**：`scripts/smoke-test.mjs` 期望关键词集扩充到 11 个；新增 `[8b] templates/api-doc/`、`[12] v0.4 CLI 子命令`；`walk()` 排除 `__test-fixtures__/`
+
+### 设计决策
+
+- **接口文档双模式**：In-flow（流程内）走 `07-api-doc.md`，输入完整含 intent，质量高；Standalone（CLI）从 mock 静态正则反推，描述标"待后端确认"，可对老项目兜底
+- **mock 解析方案**：V1 用静态正则提取 `defineMock([{...}])` 的 url/method + `Array.from(...).map(...)` 内字段名；不真跑 handler，避免 ts/faker 依赖；后续 v0.5 可升级 AST
+- **mock 策略**：默认业务定向中间件，而不是全前缀 mock-server 接管。原因是框架端点结构复杂，应继续走宿主 proxy / 官方 mock 服务
+- **字段描述**：`desc` 缺失时只生成保守描述并标记"待后端确认"，避免把 AI 推断伪装成业务事实
+- **DM-R11.4 触发条件精确化**：旧版"出现 `v-loading="model.global..."` 必须有 `pageConfig`"是错的，因为 `pageConfig` 是 `defineDataModel` 的可选项；新版只在真正读 `model.global.pageConfig.xxx` 时才校验，避免对仅用 `model.global.state.loading` 的页面误报
+
+### 验证
+
+- ✓ `node --check scripts/validate-page.mjs` / `scripts/smoke-test.mjs` / `scripts/gen-api-doc.mjs`
+- ✓ `node scripts/smoke-test.mjs` 12 个检查点全 pass
+- ✓ `node scripts/validate-page.mjs references/docs/page-examples/base/list.vue` → 完全合规
+- ✓ 4 个 fixture 全部按预期：elform-prop（pass，不误报 :model prop）、pos-frame-model（pass，defineFrameModel 等价）、neg-scattered-dashboard（fail：DM-R11.1 + DM-R11.3）、neg-pageconfig-missing（fail：DM-R11.4）
+- ✓ `node bin/cli.mjs gen-api-doc scripts/__test-fixtures__/mock/demo/order.mock.ts` → 6 接口 / 8 字段，phone/amount/datetime 类型自动识别正确
+
+### Breaking Changes（升级注意）
+
+- ⚠️ `validate-page.mjs` 从"软提示"升级为"生成强制 gate"：散装 `ref + onMounted + request` + 模板用 `model.` 的写法会直接 fail
+- ⚠️ `04-mock.md` 默认策略翻转，新生成页面默认用业务定向中间件；旧项目不影响但建议迁移
+- ⚠️ 页面层流程 6 步 → 7 步（07-api-doc.md 是新节点，apiMode == mock 时强制产出）
+- ⚠️ `package.json` version 从 0.1.0 升到 0.4.0，对齐 CHANGELOG
+
+### 兼容性
+
+- 老用户跑 `npx epoint-f10code-gen update` 自动升级到 v0.4
+- 旧版生成的 .vue 走标准 `defineDataModel` 模式不需要重写
+- `defineFrameModel` 与 `defineDataModel` 在所有规则中**等价对待**，老项目用前者无需改
+- `gen-api-doc` 是新增独立命令，不影响现有任何流程
+
+---
+
 ## v0.3.0 · 2026-05-27 · 架构优化大改造
 
 ### 背景

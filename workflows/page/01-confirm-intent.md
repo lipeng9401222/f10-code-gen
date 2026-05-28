@@ -59,6 +59,30 @@ T4 → 直接产出 intent_resolved → 跳过对话 → 进 02-match-template.m
 
 ---
 
+## intent.fields 字段契约（v0.4）
+
+字段必须尽量结构化，供 `03-generate.md`、`04-mock.md`、`07-api-doc.md` 复用：
+
+```ts
+type IntentField = {
+  name: string;      // 英文字段名，必填
+  label?: string;    // 中文名 / 显示名
+  type?: string;     // text / enum / date / datetime / number / amount / boolean ...
+  required?: boolean;
+  desc?: string;     // 给后端接口文档使用
+  options?: Array<{ label: string; value: string | number | boolean }>;
+  example?: unknown;
+};
+```
+
+抽取要求：
+- 用户只给中文字段时，补 `name`，例如“创建时间” → `createTime`
+- 枚举字段必须尽量补 `options`
+- 用户没给 `desc` 不要硬编业务事实；后续接口文档会标记“待后端确认”
+- 旧版字符串数组仍可兼容，但进入 Step 2 前要转换为对象数组
+
+---
+
 ## 对话模板（按 T1/T2/T3/T4 分流）
 
 ### Step 1 · 通道 T1 · 简短文字 → 强制对话补全

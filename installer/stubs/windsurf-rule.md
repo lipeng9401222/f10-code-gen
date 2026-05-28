@@ -1,5 +1,5 @@
 ---
-description: epoint F10 Vue 页面代码生成 skill（Windsurf 入口）。当用户提到 F10 / epoint Vue 框架 / 列表页 / 表单页 / 详情页 / ep-data-grid / ep-form / ep-layout-manager / 弹窗 / $dialog / defineDataModel / useTableModel / useTreeModel / useListModel / @epframe/eui-core / @epoint-fe/eui-components / eui-cli / 标段管理 / 采购 / 招投标列表 / vue-docs / page-examples / typical / mock / e-toolbar / e-tree / 主页面+树+三弹窗 / 新建工程 / pnpm 私有源 / nrm epoint 等关键字时激活。即使用户没说"F10"，看到 ep-* / e-* / @epframe / @epoint-fe 类标签或包名，都要立刻触发。
+description: epoint F10 / EUI Vue 页面代码生成 skill（Windsurf 入口）。用于 F10 框架、EUI / EUI4.0 / EUI4、EUI Vue、eui-cli 相关任务。
 trigger: model_decision
 ---
 
@@ -23,12 +23,11 @@ trigger: model_decision
 
 ## Auto-Triggers 摘要（看到任一立即激活）
 
-- 标签：`ep-data-grid` / `ep-layout-manager` / `ep-form` / `e-toolbar` / `e-tree` / `e-tabs`
-- Hook：`defineDataModel` / `useTableModel` / `useTreeModel` / `useListModel`
-- Import：`@epframe/eui-core` / `@epoint-fe/eui-components`
-- CLI：`eui-cli ws` / `eui-cli web` / `eui-cli comp`
-- 路径：`vue-docs` / `page-examples` / `typical`
-- 业务术语："F10 列表页/表单页/详情页/弹窗"、"标段管理"、"主页面+树+三弹窗"
+- F10：`F10` / `F10 框架` / `epoint F10`
+- EUI：`EUI` / `EUI4.0` / `EUI4` / `EUI Vue`
+- CLI：`eui-cli`
+
+组件、Hook、业务术语和模板路径不放在入口 metadata；触发后由主体 `SKILL.md` 的路由表处理。
 
 ---
 

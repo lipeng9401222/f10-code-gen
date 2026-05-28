@@ -72,6 +72,7 @@
 3. 树字段不是 `value` / `label`（违反 R3）
 4. mock 返回格式不对（违反 R4）
 5. params 不是 `computed`（违反 R7）
+6. Dashboard / 看板模板引用 `model.global`，但 script 没有 `defineDataModel`（违反 R11）
 
 ### 分类 B · 组件相关（看到 [Vue warn] 时）
 
@@ -97,9 +98,10 @@
 ### 分类 E · 框架配置相关（看到全局错时）
 
 可能性：
-1. mock-server 插件没启用（vite.config.js 缺 mockServerPlugin）
+1. 业务 mock 全前缀拦截，误拦 `/resourceaction/*` / `/auth/*` / `/themedataaction/*` 等框架端点
 2. 路由 alias `@` 不存在（vite.config.js 缺 resolve.alias）
 3. 私有源没切对 / 没登录（pnpm install 报 404）
+4. 业务 mock 请求体只按 JSON 解析，遇到 form-encoded 的 `viewstate=...&params=...` 报错
 
 ---
 

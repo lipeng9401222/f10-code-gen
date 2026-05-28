@@ -48,6 +48,8 @@
 | 弹窗交互 | `dialog-interaction.md` |
 | 性能优化 | `performance-optimization.md` |
 | 样式开发 / 辅助类 / token | `style-development.md` |
+| EUI4.0 / EUI4 辅助类 / utility classes | `common/ai/eui4-utility-classes.md` |
+| EUI4 CSS 变量 / eui4 css vars / token | `common/ai/eui4-css-vars.md` |
 | Mock 开发 | `mock-development.md` |
 | 常见问题排查 / Bug | `troubleshooting.md` |
 | 框架 API 开发 | `api-development.md` |

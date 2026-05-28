@@ -30,6 +30,90 @@ const violation = (rule, msg) => {
   violationCount += 1;
 };
 const ok = (msg) => console.log(`  ✓ ${msg}`);
+const warn = (msg) => console.log(`  ⚠ ${msg}`);
+
+// =============================================================
+// SFC 解析：把 .vue 拆成 template / script 两段
+// =============================================================
+function splitVueSections(source) {
+  const templateMatch = source.match(/<template[^>]*>([\s\S]*?)<\/template>/i);
+  const scriptMatch = source.match(/<script[^>]*>([\s\S]*?)<\/script>/i);
+  return {
+    template: templateMatch ? templateMatch[1] : '',
+    script: scriptMatch ? scriptMatch[1] : ''
+  };
+}
+
+// =============================================================
+// 数据模型签名检测（v0.4 R11 子规则统一通过这些谓词判断）
+// =============================================================
+// DM-R11 合法签名：defineDataModel ∪ defineFrameModel
+function hasDefineModel(scriptCode) {
+  return /Utils\.(defineDataModel|defineFrameModel)\s*\(/.test(scriptCode);
+}
+
+// 是否在 onMounted 内调用了 initData()（兼容带参数 / 不带参数）
+function hasInitData(scriptCode) {
+  return /model\.methods\.initData\s*\(/.test(scriptCode);
+}
+
+// 是否声明了 global.pageConfig（与 PageConfig 类配套）
+function hasGlobalPageConfig(scriptCode) {
+  return /global\s*:\s*\{[\s\S]*?pageConfig\s*:\s*new\s+PageConfig\s*\(/.test(scriptCode) ||
+    /pageConfig\s*:\s*new\s+PageConfig\s*\(/.test(scriptCode);
+}
+
+// 模板里是否使用了 model.<标识符>（排除 :model="..." 这种 Element form 的 prop）
+function templateUsesModel(templateCode) {
+  // 把 :model="xxx" / :model='xxx' / :model=xxx 形态全部抹掉，再检测剩余的 model.
+  const stripped = templateCode.replace(/:model\s*=\s*(['"])[^'"]*\1/g, '');
+  return /\bmodel\.[a-zA-Z_$]/.test(stripped);
+}
+
+// 模板/script 是否使用了 model.global.pageConfig 或 model.pageConfig（DM-R11.4 真正触发条件）
+// 仅引用 model.global.state.loading 等不算
+function refsPageConfigField(code) {
+  const stripped = code.replace(/:model\s*=\s*(['"])[^'"]*\1/g, '');
+  return /\bmodel\.global\.pageConfig\b/.test(stripped) || /\bmodel\.pageConfig\b/.test(stripped);
+}
+
+/**
+ * 检测页面顶层是否有"主数据形态"的散装 ref（DM-R11.3 第 ① 特征）
+ * 主数据形态：ref({...}) / ref([...]) / ref(new ...) —— 容器型初始值
+ * 排除：ref('') / ref(0) / ref(false) / ref(null) / ref(undefined) —— UI 局部状态
+ */
+function hasLooseDataRef(scriptCode) {
+  // 移除注释 + 字符串 + 模板字符串，避免误命中
+  const cleaned = stripCommentsAndStrings(scriptCode);
+  // 命中 const|let xxx = ref({...}) | ref([...]) | ref(new XXX(...))
+  return /\b(?:const|let)\s+\w+\s*=\s*ref\s*\(\s*(?:\{|\[|new\s+\w+)/.test(cleaned);
+}
+
+/**
+ * 检测 script 中是否调用了 request / requestAxios / restfulAxios（DM-R11.3 第 ② 特征 · 放宽版）
+ * 不再严格要求"onMounted 直接体内"，因为真实场景里常见模式是：
+ *   onMounted(() => loadData())  →  const loadData = async () => Utils.request(...)
+ * 即调用链经过本地函数。所以只要 script 里有 onMounted + 任意位置的 request 即视为命中第②特征。
+ */
+function hasOnMountedRequest(scriptCode) {
+  // ① 必须有 onMounted
+  if (!/onMounted\s*\(/.test(scriptCode)) return false;
+  // ② script 任意位置（注释/字符串外）有 request 调用
+  const cleaned = stripCommentsAndStrings(scriptCode);
+  return /(?:Utils\.)?(?:request|requestAxios|restfulAxios)\s*\(/.test(cleaned);
+}
+
+/**
+ * 删除 // 行注释、/* 块注释、单引号 / 双引号 / 反引号字符串内容（保留括号配对）
+ */
+function stripCommentsAndStrings(code) {
+  return code
+    .replace(/\/\/[^\n]*/g, '')
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .replace(/'[^'\n]*'/g, "''")
+    .replace(/"[^"\n]*"/g, '""')
+    .replace(/`[^`]*`/g, '``');
+}
 
 /**
  * 检查规则集
@@ -74,12 +158,6 @@ const checks = [
     rule: /Utils\.requestAxios\([\s\S]*?\/list/,
     type: 'negative',
     msg: '表格列表用了 Utils.requestAxios 直连，必须用 useTableModel'
-  },
-  {
-    name: 'DM-R1 必须有 defineDataModel',
-    rule: /Utils\.defineDataModel/,
-    type: 'positive',
-    msg: '页面必须用 Utils.defineDataModel 包装数据模型'
   },
 
   // ===== component-usage-rules.md =====
@@ -127,6 +205,10 @@ async function main() {
 
   let warnings = 0;
 
+  // ===== 标准 SFC 拆分（template / script），R11 子规则用拆分后的内容做精确判定 =====
+  const { template, script } = splitVueSections(content);
+
+  // ===== 通用规则（基于整个文件的正则） =====
   for (const check of checks) {
     const matched = check.rule.test(content);
     if (check.type === 'positive') {
@@ -138,10 +220,76 @@ async function main() {
     } else if (check.type === 'warn-negative') {
       if (!matched) ok(`[${check.name}]`);
       else {
-        console.log(`  ⚠ [${check.name}] ${check.msg}`);
+        warn(`[${check.name}] ${check.msg}`);
         warnings += 1;
       }
     }
+  }
+
+  // =============================================================
+  // v0.4 R11 子规则（数据模型全页面通用约束）
+  // 文档依据：references/docs/getting-started/getting-started-use-data-model.md
+  // =============================================================
+  const usesModel = templateUsesModel(template);
+  const refsPageConfig = refsPageConfigField(template) || refsPageConfigField(script);
+  const hasModelDef = hasDefineModel(script);
+  const initDataCalled = hasInitData(script);
+
+  // ----- DM-R11.1 模板 model. 引用必须有数据模型声明 -----
+  if (usesModel) {
+    if (hasModelDef) {
+      ok('[DM-R11.1 模板 model. 引用有 defineDataModel/defineFrameModel]');
+    } else {
+      violation(
+        'DM-R11.1 模板 model. 引用必须有数据模型声明',
+        '模板中使用了 model.xxx，但 <script setup> 中没有 const model = Utils.defineDataModel(...) 或 Utils.defineFrameModel(...)'
+      );
+    }
+  } else {
+    ok('[DM-R11.1 模板未使用 model.，跳过]');
+  }
+
+  // ----- DM-R11.2 数据模型必须 onMounted 初始化 -----
+  if (hasModelDef) {
+    if (initDataCalled) {
+      ok('[DM-R11.2 onMounted 初始化数据模型]');
+    } else {
+      violation(
+        'DM-R11.2 数据模型必须 onMounted 初始化',
+        '使用 defineDataModel/defineFrameModel 时必须在 onMounted 中调用 model.methods.initData()'
+      );
+    }
+  } else {
+    ok('[DM-R11.2 未使用数据模型，跳过]');
+  }
+
+  // ----- DM-R11.3 主数据禁止散装 ref + onMounted request -----
+  // 三特征同时命中才报：① 顶层主数据 ref，② onMounted 内 request，③ 没有数据模型
+  const looseRef = hasLooseDataRef(script);
+  const onMountedReq = hasOnMountedRequest(script);
+  if (looseRef && onMountedReq && !hasModelDef) {
+    violation(
+      'DM-R11.3 主数据禁止散装 ref + onMounted request',
+      '页面顶层有 ref({...}) 或 ref([...]) + onMounted 内直接调 request/requestAxios/restfulAxios，且没有 defineDataModel/defineFrameModel。主数据加载必须走 useTableModel/useListModel/useTreeModel/createSubModel'
+    );
+  } else {
+    ok('[DM-R11.3 未命中散装请求模式]');
+  }
+
+  // ----- DM-R11.4 引用了 pageConfig 字段时必须声明 PageConfig 实例 -----
+  // 仅当真正用 model.global.pageConfig.xxx / model.pageConfig.xxx 时才校验
+  // 仅用 model.global.state.loading 不触发
+  if (refsPageConfig) {
+    if (hasGlobalPageConfig(script)) {
+      ok('[DM-R11.4 pageConfig 引用配套有 new PageConfig]');
+    } else {
+      violation(
+        'DM-R11.4 pageConfig 引用必须实例化',
+        '代码中读取了 model.global.pageConfig.xxx 或 model.pageConfig.xxx，但 defineDataModel 的 global 未声明 pageConfig: new PageConfig(...) — 该字段会是 undefined'
+      );
+    }
+  } else {
+    ok('[DM-R11.4 未引用 pageConfig 字段，跳过]');
   }
 
   console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');

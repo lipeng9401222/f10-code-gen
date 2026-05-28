@@ -149,6 +149,7 @@ F10 组件化架构下，工程分两层，**职责严格分离**：
 - ✅ **业务页面** → 组件工程 `src/views/<module>/<appName>/<appName>-list.vue`
 - ✅ **业务路由** → 组件工程 `src/router/static.js` 的 `MENU_ROUTES`（有授权）/ `ROOT_ROUTES`（无授权）数组
 - ✅ **业务 mock** → 组件工程 `mock/<module>/<appName>.mock.ts`（且 `package.json.exports` 暴露 `"./mock"`）
+- ✅ **mock 接入中间件** → 可写 Web 工程 `build/<module>-mock.middleware.mjs`，但只能作为 Vite 接入层，业务接口定义仍以组件工程 mock / generated_urls 为来源
 
 ### 识别 Web 工程 / 组件工程的特征签名
 
@@ -171,6 +172,7 @@ F10 组件化架构下，工程分两层，**职责严格分离**：
 - [ ] 任何生成的 `.vue` 业务页面，绝对路径里**不出现** Web 工程目录名（如 `web-show` / `demo-web`）
 - [ ] 任何生成的路由记录，写入的是**组件工程**的 `src/router/static.js`
 - [ ] 任何生成的 mock 文件，落在**组件工程**的 `mock/` 目录下
+- [ ] 如生成 Web 工程 mock 中间件，它只拦截 `/api/<module>/` 并放行框架端点
 - [ ] 写完后，用 `grep -r "<新生成的 appName>" packages/<web 工程>/src/` 应返回 **0 行**
 
 ---

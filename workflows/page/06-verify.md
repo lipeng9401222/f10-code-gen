@@ -7,6 +7,12 @@
 
 ## Step 1 · 启动 dev server（如果没启动）
 
+启动前先确认 `page/07-api-doc.md` 已完成：
+
+- [ ] `api_doc_generated.markdown` 存在
+- [ ] `api_doc_generated.json` 存在
+- [ ] `api_doc_generated.interface_count` 与 `generated_urls` 对齐
+
 ### 模式 A · examples 包内
 
 ```sh
@@ -138,6 +144,7 @@ verification_result:
 ## ✓ 检验句（任务完成的最终标志）
 
 - [ ] 浏览器能打开页面（不是 404 / blank）
+- [ ] 接口文档 Markdown + JSON 已生成
 - [ ] 6 项基础体检**全过**
 - [ ] 控制台**无红色 error**
 - [ ] 用户**已确认**功能可用（B 档场景）

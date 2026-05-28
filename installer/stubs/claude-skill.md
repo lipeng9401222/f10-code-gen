@@ -1,7 +1,7 @@
 ---
 name: epoint-f10code-gen
-description: epoint F10 Vue 页面代码生成 skill（Claude Code 入口）。当用户提到 F10 / epoint Vue 框架 / 列表页 / 表单页 / 详情页 / ep-data-grid / ep-form / ep-layout-manager / 弹窗 / $dialog / defineDataModel / useTableModel / useTreeModel / useListModel / EpDataGrid / @epframe/eui-core / @epoint-fe/eui-components / eui-cli / 标段管理 / 采购 / 招投标列表 / vue-docs / page-examples / typical / mock 配置 / e-toolbar / e-tree / 主页面+树+三弹窗 / 新建工程 / pnpm 私有源 / nrm epoint 等关键字时必须激活。即使用户没说"F10"，看到 ep-* / e-* / @epframe / @epoint-fe 类标签或包名，都要立刻触发。
-when-to-use: 用户描述需要生成 / 修改 / 排查 epoint F10 框架（Vue 9.5.4-sp1）页面、组件、mock、路由、工程的任务。包括：环境准备（node/pnpm/nrm/eui-cli）、工程创建（eui-cli ws/web/comp）、页面生成（列表/表单/详情/弹窗/树+列表）、bug 修复、规则更新。
+description: epoint F10 / EUI Vue 页面代码生成 skill（Claude Code 入口）。用于 F10 框架、EUI / EUI4.0 / EUI4、EUI Vue、eui-cli 相关任务。
+when-to-use: 用户描述需要生成 / 修改 / 排查 epoint F10 / EUI 框架页面、组件、mock、接口文档、路由、工程的任务。包括环境准备、工程创建、页面生成、bug 修复、规则更新。
 primary: true
 ---
 
@@ -25,12 +25,11 @@ primary: true
 
 ## Auto-Triggers 摘要（看到任一立即激活）
 
-- 标签：`ep-data-grid` / `ep-layout-manager` / `ep-form` / `e-toolbar` / `e-tree` / `e-tabs`
-- Hook：`defineDataModel` / `useTableModel` / `useTreeModel` / `useListModel`
-- Import：`@epframe/eui-core` / `@epoint-fe/eui-components`
-- CLI：`eui-cli ws` / `eui-cli web` / `eui-cli comp`
-- 路径：`vue-docs` / `page-examples` / `typical`
-- 业务术语："F10 列表页/表单页/详情页/弹窗"、"标段管理"、"主页面+树+三弹窗"
+- F10：`F10` / `F10 框架` / `epoint F10`
+- EUI：`EUI` / `EUI4.0` / `EUI4` / `EUI Vue`
+- CLI：`eui-cli`
+
+组件、Hook、业务术语和模板路径不放在入口 metadata；触发后由主体 `SKILL.md` 的路由表处理。
 
 ---
 
