@@ -252,6 +252,20 @@ async function main() {
     if (await exists(p)) ok(`templates/api-doc/${f}`);
     else fail(`缺失：templates/api-doc/${f}`);
   }
+  try {
+    const mdTpl = await readFile(path.join(SKILL_ROOT, 'templates', 'api-doc', 'markdown.md.tmpl'));
+    const jsonTpl = await readFile(path.join(SKILL_ROOT, 'templates', 'api-doc', 'api.json.tmpl'));
+    for (const token of ['{{INTERFACE_TABLE_HEADER}}', '{{INTERFACE_TABLE}}', '{{INTERFACE_DETAILS}}']) {
+      if (mdTpl.includes(token)) ok(`markdown.md.tmpl 含 ${token}`);
+      else fail(`markdown.md.tmpl 缺逐接口明细占位：${token}`);
+    }
+    for (const token of ['"request"', '"response"', '"fields"', '"example"', '"fieldSources"']) {
+      if (jsonTpl.includes(token)) ok(`api.json.tmpl 含 ${token}`);
+      else fail(`api.json.tmpl 缺逐接口 JSON 契约：${token}`);
+    }
+  } catch (e) {
+    fail(`templates/api-doc/ 读取失败：${e.message}`);
+  }
 
   // ========== 9. 占位符残留检查（仅 templates/ 允许） ==========
   // 用字符串拼接构造占位符标记，避免脚本自己被自己扫到
@@ -350,14 +364,46 @@ async function main() {
     const cli = await readFile(binCli);
     if (cli.includes("case 'gen-api-doc'")) ok('bin/cli.mjs 已注册 gen-api-doc 子命令');
     else fail('bin/cli.mjs 缺 gen-api-doc 子命令分支');
+    for (const token of ['mock-file|mock-dir', '--config', '--api-prefix']) {
+      if (cli.includes(token)) ok(`bin/cli.mjs gen-api-doc 帮助含 ${token}`);
+      else fail(`bin/cli.mjs gen-api-doc 帮助缺 ${token}`);
+    }
   } catch (e) {
     fail(`bin/cli.mjs 读取失败：${e.message}`);
+  }
+
+  // ========== 13. v0.4.2 接口文档明细化契约 ==========
+  console.log('\n[13] v0.4.2 接口文档明细化');
+  try {
+    const apiWorkflow = await readFile(path.join(SKILL_ROOT, 'workflows', 'page', '07-api-doc.md'));
+    for (const token of ['suite mode', 'request.fields', 'request.example', 'response.fields', 'response.example', 'MODULE_CONFIGS', 'ACTION_FORM_CONFIGS']) {
+      if (apiWorkflow.includes(token)) ok(`07-api-doc.md 含 ${token}`);
+      else fail(`07-api-doc.md 缺明细化契约：${token}`);
+    }
+    const genApiDoc = await readFile(genApiDocScript);
+    for (const token of ['mock-file|mock-dir', 'standalone_suite', 'loadConfigIndex', 'api-prefix', 'assertDocComplete']) {
+      if (genApiDoc.includes(token)) ok(`gen-api-doc.mjs 含 ${token}`);
+      else fail(`gen-api-doc.mjs 缺 v0.4.2 能力：${token}`);
+    }
+    for (const f of [
+      'mock/ipd-lite/requirement.mock.ts',
+      'mock/ipd-lite/trdcp-review.mock.ts',
+      'mock/ipd-lite/dashboard.mock.ts',
+      'mock/ipd-lite/framework.mock.ts',
+      'src/views/ipd-lite/config.js'
+    ]) {
+      const p = path.join(SKILL_ROOT, 'scripts', '__test-fixtures__', f);
+      if (await exists(p)) ok(`__test-fixtures__/${f}`);
+      else fail(`缺失：__test-fixtures__/${f}`);
+    }
+  } catch (e) {
+    fail(`v0.4.2 明细化检查失败：${e.message}`);
   }
 
   // ========== 总结 ==========
   console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
   if (failCount === 0 && warnCount === 0) {
-    console.log('✓ 全部 pass，skill 健康度满分');
+    console.log('✓ 全部检查通过');
   } else if (failCount === 0) {
     console.log(`⚠ ${warnCount} 个 warn（非致命）`);
   } else {

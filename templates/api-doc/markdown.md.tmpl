@@ -1,6 +1,6 @@
-# {{TITLE}} 接口文档
+# {{TITLE}}
 
-> 生成方式：{{GENERATION_MODE}}（in-flow 走 `workflows/page/07-api-doc.md`，standalone 由 `npx epoint-f10code-gen gen-api-doc <mock-file>` 反推）
+> 生成方式：{{GENERATION_MODE}}
 > 生成时间：{{GENERATED_AT}}
 {{COVERAGE_NOTE}}
 
@@ -8,22 +8,20 @@
 
 - **模块**：{{MODULE}}
 - **页面 / 应用**：{{APP_NAME}}
+- **文档模式**：{{MODE}}
 - **请求前缀**：`{{BASE_PATH}}`
+- **接口数量**：{{INTERFACE_COUNT}}
 - **请求体格式**：JSON 或 `application/x-www-form-urlencoded`（F10 `Utils.request` / `Utils.requestAxios` 兼容）
-- **响应体格式**：业务接口统一返回 `{ state: boolean, message?: string, data?: any, total?: number }`
+- **字段来源**：{{FIELD_SOURCE_SUMMARY}}
 
-## 字段说明
+## 字段覆盖率
 
-字段覆盖率：{{COVERAGE_PCT}}（`{{COVERAGE_WITH_DESC}}/{{COVERAGE_TOTAL}}`，描述来自 intent.fields；其余由字段名/类型推断，标注"待后端确认"）
-
-| 字段 | 中文名 | 类型 | 必填 | 描述 | 示例 |
-| --- | --- | --- | --- | --- | --- |
-{{FIELD_TABLE}}
+- **覆盖率**：{{COVERAGE_PCT}}（{{COVERAGE_WITH_DESC}}/{{COVERAGE_TOTAL}}）
+- **说明**：`config` / `intent` 来源字段视为已有业务描述；`mock` / `generated` 来源字段需后端联调确认。
 
 ## 接口列表
 
-| 方法 | URL | 说明 |
-| --- | --- | --- |
+{{INTERFACE_TABLE_HEADER}}
 {{INTERFACE_TABLE}}
 
 ## 接口详情
@@ -32,4 +30,4 @@
 
 ---
 
-_本文档由 `epoint-f10code-gen` skill 自动生成。修改后端实现时请同步更新本文档与同名 `*.api.json`。_
+_修改后端实现时，请同步更新本文档与同名 `*.api.json`。_

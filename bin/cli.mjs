@@ -150,7 +150,7 @@ function printHelp() {
   update                重新同步主体（保留入口不动）
   smoke                 跑 skill 自身健康检查
   validate <vue-file>   校验生成的 .vue 文件是否合规
-  gen-api-doc <mock-file> 根据 mock 文件反推接口文档（Markdown + JSON）
+  gen-api-doc <mock-file|mock-dir> 根据 mock 反推接口文档（Markdown + JSON）
   sync                  同步官方 vue-docs → references/docs/
 
 通用选项:
@@ -166,6 +166,8 @@ gen-api-doc 选项:
   --out-dir <dir>       输出目录（默认推断 <component_package>/docs/api/<module>/）
   --module <name>       模块名（默认从 mock 路径反推）
   --app-name <name>     应用名（默认从 mock 文件名反推）
+  --config <file>       页面配置文件，读取 MODULE_CONFIGS / ACTION_FORM_CONFIGS
+  --api-prefix <path>   只收集指定业务前缀，例如 /api/ipd
 
 示例:
   npx epoint-f10code-gen init
@@ -173,6 +175,7 @@ gen-api-doc 选项:
   npx epoint-f10code-gen check
   npx epoint-f10code-gen validate ./packages/examples/src/views/demo/bid-mgmt.vue
   npx epoint-f10code-gen gen-api-doc ./packages/examples/mock/demo/order.mock.ts
+  npx epoint-f10code-gen gen-api-doc ./mock/ipd --config ./src/views/ipd/config.js --api-prefix /api/ipd
 `);
 }
 
@@ -418,12 +421,12 @@ async function cmdSync() {
 
 async function cmdGenApiDoc(opts) {
   if (opts.positional.length === 0) {
-    console.error('用法: npx epoint-f10code-gen gen-api-doc <mock-file> [--out-dir <dir>] [--module <name>] [--app-name <name>]');
+    console.error('用法: npx epoint-f10code-gen gen-api-doc <mock-file|mock-dir> [--out-dir <dir>] [--module <name>] [--app-name <name>] [--config <file>] [--api-prefix <path>]');
     return 1;
   }
-  // 透传 positional + 已知 options（--out-dir / --module / --app-name）
+  // 透传 positional + 已知 options
   const passthroughArgs = [opts.positional[0]];
-  for (const flag of ['out-dir', 'module', 'app-name']) {
+  for (const flag of ['out-dir', 'module', 'app-name', 'config', 'api-prefix']) {
     const idx = process.argv.indexOf(`--${flag}`);
     if (idx >= 0 && process.argv[idx + 1]) {
       passthroughArgs.push(`--${flag}`, process.argv[idx + 1]);

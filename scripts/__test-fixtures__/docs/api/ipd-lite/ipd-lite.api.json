@@ -1,0 +1,2346 @@
+{
+  "module": "ipd-lite",
+  "appName": "ipd-lite",
+  "title": "ipd-lite 接口文档",
+  "basePath": "/api/ipd-lite",
+  "bodyParser": "json_and_form_encoded",
+  "generationMode": "standalone_suite",
+  "mode": "suite",
+  "generatedAt": "2026-05-28 10:50:09",
+  "mockCoverage": {
+    "scanned": 15,
+    "documented": 15,
+    "percent": 100
+  },
+  "fieldCoverage": {
+    "total": 26,
+    "withDesc": 20,
+    "generatedDesc": 6,
+    "percent": 77,
+    "bySource": {
+      "mock": 18,
+      "config": 20
+    }
+  },
+  "fields": [
+    {
+      "name": "requirementTotal",
+      "label": "数量",
+      "type": "number",
+      "required": false,
+      "desc": "数量，类型：number（待后端确认）",
+      "descSource": "generated",
+      "source": "mock",
+      "sources": [
+        "mock"
+      ],
+      "options": [],
+      "example": 0,
+      "children": []
+    },
+    {
+      "name": "requirementCompleted",
+      "label": "数量",
+      "type": "number",
+      "required": false,
+      "desc": "数量，类型：number（待后端确认）",
+      "descSource": "generated",
+      "source": "mock",
+      "sources": [
+        "mock"
+      ],
+      "options": [],
+      "example": 0,
+      "children": []
+    },
+    {
+      "name": "taskTotal",
+      "label": "数量",
+      "type": "number",
+      "required": false,
+      "desc": "数量，类型：number（待后端确认）",
+      "descSource": "generated",
+      "source": "mock",
+      "sources": [
+        "mock"
+      ],
+      "options": [],
+      "example": 0,
+      "children": []
+    },
+    {
+      "name": "taskCompleted",
+      "label": "数量",
+      "type": "number",
+      "required": false,
+      "desc": "数量，类型：number（待后端确认）",
+      "descSource": "generated",
+      "source": "mock",
+      "sources": [
+        "mock"
+      ],
+      "options": [],
+      "example": 0,
+      "children": []
+    },
+    {
+      "name": "onTimeRate",
+      "label": "数量",
+      "type": "number",
+      "required": false,
+      "desc": "数量，类型：number（待后端确认）",
+      "descSource": "generated",
+      "source": "mock",
+      "sources": [
+        "mock"
+      ],
+      "options": [],
+      "example": 0,
+      "children": []
+    },
+    {
+      "name": "label",
+      "label": "显示文本",
+      "type": "text",
+      "required": false,
+      "desc": "显示文本，类型：text",
+      "descSource": "config",
+      "source": "config",
+      "sources": [
+        "config"
+      ],
+      "options": [],
+      "example": "业务部门",
+      "children": []
+    },
+    {
+      "name": "value",
+      "label": "选项值",
+      "type": "text",
+      "required": false,
+      "desc": "选项值，类型：text",
+      "descSource": "config",
+      "source": "config",
+      "sources": [
+        "config"
+      ],
+      "options": [],
+      "example": "business",
+      "children": []
+    },
+    {
+      "name": "current",
+      "label": "当前页",
+      "type": "number",
+      "required": false,
+      "desc": "当前页，类型：number",
+      "descSource": "config",
+      "source": "config",
+      "sources": [
+        "config"
+      ],
+      "options": [],
+      "example": 1,
+      "children": []
+    },
+    {
+      "name": "pageSize",
+      "label": "每页条数",
+      "type": "number",
+      "required": false,
+      "desc": "每页条数，类型：number",
+      "descSource": "config",
+      "source": "config",
+      "sources": [
+        "config"
+      ],
+      "options": [],
+      "example": 10,
+      "children": []
+    },
+    {
+      "name": "conditions",
+      "label": "查询条件",
+      "type": "array",
+      "required": false,
+      "desc": "查询条件，类型：array",
+      "descSource": "config",
+      "source": "config",
+      "sources": [
+        "config"
+      ],
+      "options": [],
+      "example": [],
+      "children": []
+    },
+    {
+      "name": "feedbackStatus",
+      "label": "反馈状态",
+      "type": "enum",
+      "required": false,
+      "desc": "反馈状态，类型：enum",
+      "descSource": "config",
+      "source": "config",
+      "sources": [
+        "config",
+        "mock"
+      ],
+      "options": [],
+      "example": "<enum>",
+      "children": []
+    },
+    {
+      "name": "name",
+      "label": "需求名称",
+      "type": "text",
+      "required": true,
+      "desc": "需求名称，类型：text",
+      "descSource": "config",
+      "source": "config",
+      "sources": [
+        "config",
+        "mock"
+      ],
+      "options": [],
+      "example": "<text>",
+      "children": []
+    },
+    {
+      "name": "owner",
+      "label": "负责人",
+      "type": "enum",
+      "required": true,
+      "desc": "负责人，类型：enum",
+      "descSource": "config",
+      "source": "config",
+      "sources": [
+        "config",
+        "mock"
+      ],
+      "options": [
+        {
+          "label": "张三",
+          "value": "zhangsan"
+        },
+        {
+          "label": "李四",
+          "value": "lisi"
+        }
+      ],
+      "example": "zhangsan",
+      "children": []
+    },
+    {
+      "name": "createTime",
+      "label": "登记时间",
+      "type": "text",
+      "required": false,
+      "desc": "登记时间，类型：text",
+      "descSource": "config",
+      "source": "config",
+      "sources": [
+        "config",
+        "mock"
+      ],
+      "options": [],
+      "example": "<text>",
+      "children": []
+    },
+    {
+      "name": "source",
+      "label": "需求来源",
+      "type": "enum",
+      "required": false,
+      "desc": "需求来源，类型：enum",
+      "descSource": "config",
+      "source": "config",
+      "sources": [
+        "config",
+        "mock"
+      ],
+      "options": [],
+      "example": "<enum>",
+      "children": []
+    },
+    {
+      "name": "content",
+      "label": "需求内容",
+      "type": "text",
+      "required": true,
+      "desc": "需求内容，类型：text",
+      "descSource": "config",
+      "source": "config",
+      "sources": [
+        "config",
+        "mock"
+      ],
+      "options": [],
+      "example": "<text>",
+      "children": []
+    },
+    {
+      "name": "id",
+      "label": "主键",
+      "type": "id",
+      "required": true,
+      "desc": "主键，类型：id",
+      "descSource": "config",
+      "source": "config",
+      "sources": [
+        "mock",
+        "config"
+      ],
+      "options": [],
+      "example": "<id>",
+      "children": []
+    },
+    {
+      "name": "feedbackList",
+      "label": "列表",
+      "type": "array",
+      "required": false,
+      "desc": "列表，类型：array（待后端确认）",
+      "descSource": "generated",
+      "source": "mock",
+      "sources": [
+        "mock"
+      ],
+      "options": [],
+      "example": [],
+      "children": [
+        {
+          "name": "feedbackBy",
+          "label": "feedbackBy",
+          "type": "text",
+          "required": false,
+          "desc": "feedbackBy，类型：text（待后端确认）",
+          "descSource": "generated",
+          "source": "mock",
+          "sources": [
+            "mock"
+          ],
+          "options": [],
+          "example": "<text>",
+          "children": []
+        },
+        {
+          "name": "feedbackTime",
+          "label": "时间",
+          "type": "datetime",
+          "required": false,
+          "desc": "时间，类型：datetime（待后端确认）",
+          "descSource": "generated",
+          "source": "mock",
+          "sources": [
+            "mock"
+          ],
+          "options": [],
+          "example": "2026-05-28 12:00:00",
+          "children": []
+        },
+        {
+          "name": "content",
+          "label": "说明",
+          "type": "text",
+          "required": false,
+          "desc": "说明，类型：text（待后端确认）",
+          "descSource": "generated",
+          "source": "mock",
+          "sources": [
+            "mock"
+          ],
+          "options": [],
+          "example": "<text>",
+          "children": []
+        }
+      ]
+    },
+    {
+      "name": "state",
+      "label": "操作状态",
+      "type": "boolean",
+      "required": false,
+      "desc": "操作状态，类型：boolean",
+      "descSource": "config",
+      "source": "config",
+      "sources": [
+        "config"
+      ],
+      "options": [],
+      "example": true,
+      "children": []
+    },
+    {
+      "name": "message",
+      "label": "提示信息",
+      "type": "text",
+      "required": false,
+      "desc": "提示信息，类型：text",
+      "descSource": "config",
+      "source": "config",
+      "sources": [
+        "config"
+      ],
+      "options": [],
+      "example": "操作成功",
+      "children": []
+    },
+    {
+      "name": "ids",
+      "label": "主键集合",
+      "type": "array",
+      "required": true,
+      "desc": "主键集合，类型：array",
+      "descSource": "config",
+      "source": "config",
+      "sources": [
+        "config"
+      ],
+      "options": [],
+      "example": [
+        "<id1>",
+        "<id2>"
+      ],
+      "children": []
+    },
+    {
+      "name": "stageName",
+      "label": "阶段名称",
+      "type": "text",
+      "required": true,
+      "desc": "阶段名称，类型：text",
+      "descSource": "config",
+      "source": "config",
+      "sources": [
+        "config",
+        "mock"
+      ],
+      "options": [],
+      "example": "<text>",
+      "children": []
+    },
+    {
+      "name": "reviewType",
+      "label": "评审类型",
+      "type": "enum",
+      "required": true,
+      "desc": "评审类型，类型：enum",
+      "descSource": "config",
+      "source": "config",
+      "sources": [
+        "config",
+        "mock"
+      ],
+      "options": [
+        {
+          "label": "TR",
+          "value": "TR"
+        },
+        {
+          "label": "DCP",
+          "value": "DCP"
+        }
+      ],
+      "example": "TR",
+      "children": []
+    },
+    {
+      "name": "startDate",
+      "label": "开始日期",
+      "type": "date",
+      "required": true,
+      "desc": "开始日期，类型：date",
+      "descSource": "config",
+      "source": "config",
+      "sources": [
+        "config",
+        "mock"
+      ],
+      "options": [],
+      "example": "2026-05-28",
+      "children": []
+    },
+    {
+      "name": "endDate",
+      "label": "结束日期",
+      "type": "date",
+      "required": true,
+      "desc": "结束日期，类型：date",
+      "descSource": "config",
+      "source": "config",
+      "sources": [
+        "config",
+        "mock"
+      ],
+      "options": [],
+      "example": "2026-05-28",
+      "children": []
+    },
+    {
+      "name": "attendees",
+      "label": "参会人",
+      "type": "text",
+      "required": true,
+      "desc": "参会人，类型：text",
+      "descSource": "config",
+      "source": "config",
+      "sources": [
+        "config",
+        "mock"
+      ],
+      "options": [],
+      "example": "<text>",
+      "children": []
+    }
+  ],
+  "interfaces": [
+    {
+      "method": "post",
+      "url": "/api/ipd-lite/dashboard/data",
+      "name": "data数据",
+      "moduleKey": "dashboard",
+      "moduleTitle": "dashboard",
+      "mockFile": "scripts/__test-fixtures__/mock/ipd-lite/dashboard.mock.ts",
+      "fieldSources": [
+        "mock"
+      ],
+      "request": {
+        "fields": [],
+        "example": {
+          "params": {}
+        }
+      },
+      "response": {
+        "fields": [
+          {
+            "name": "requirementTotal",
+            "label": "数量",
+            "type": "number",
+            "required": false,
+            "desc": "数量，类型：number（待后端确认）",
+            "descSource": "generated",
+            "source": "mock",
+            "sources": [
+              "mock"
+            ],
+            "options": [],
+            "example": 0,
+            "children": []
+          },
+          {
+            "name": "requirementCompleted",
+            "label": "数量",
+            "type": "number",
+            "required": false,
+            "desc": "数量，类型：number（待后端确认）",
+            "descSource": "generated",
+            "source": "mock",
+            "sources": [
+              "mock"
+            ],
+            "options": [],
+            "example": 0,
+            "children": []
+          },
+          {
+            "name": "taskTotal",
+            "label": "数量",
+            "type": "number",
+            "required": false,
+            "desc": "数量，类型：number（待后端确认）",
+            "descSource": "generated",
+            "source": "mock",
+            "sources": [
+              "mock"
+            ],
+            "options": [],
+            "example": 0,
+            "children": []
+          },
+          {
+            "name": "taskCompleted",
+            "label": "数量",
+            "type": "number",
+            "required": false,
+            "desc": "数量，类型：number（待后端确认）",
+            "descSource": "generated",
+            "source": "mock",
+            "sources": [
+              "mock"
+            ],
+            "options": [],
+            "example": 0,
+            "children": []
+          },
+          {
+            "name": "onTimeRate",
+            "label": "数量",
+            "type": "number",
+            "required": false,
+            "desc": "数量，类型：number（待后端确认）",
+            "descSource": "generated",
+            "source": "mock",
+            "sources": [
+              "mock"
+            ],
+            "options": [],
+            "example": 0,
+            "children": []
+          }
+        ],
+        "example": {
+          "requirementTotal": 0,
+          "requirementCompleted": 0,
+          "taskTotal": 0,
+          "taskCompleted": 0,
+          "onTimeRate": 0
+        }
+      }
+    },
+    {
+      "method": "post",
+      "url": "/api/ipd-lite/common/personOptions",
+      "name": "选项数据",
+      "moduleKey": "common",
+      "moduleTitle": "common",
+      "mockFile": "scripts/__test-fixtures__/mock/ipd-lite/framework.mock.ts",
+      "fieldSources": [
+        "config"
+      ],
+      "request": {
+        "fields": [],
+        "example": {
+          "params": {}
+        }
+      },
+      "response": {
+        "fields": [
+          {
+            "name": "label",
+            "label": "显示文本",
+            "type": "text",
+            "required": false,
+            "desc": "显示文本，类型：text",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": "张三",
+            "children": []
+          },
+          {
+            "name": "value",
+            "label": "选项值",
+            "type": "text",
+            "required": false,
+            "desc": "选项值，类型：text",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": "zhangsan",
+            "children": []
+          }
+        ],
+        "example": {
+          "data": [
+            {
+              "label": "张三",
+              "value": "zhangsan"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "post",
+      "url": "/api/ipd-lite/requirement/list",
+      "name": "分页列表",
+      "moduleKey": "requirement",
+      "moduleTitle": "需求管理",
+      "mockFile": "scripts/__test-fixtures__/mock/ipd-lite/requirement.mock.ts",
+      "fieldSources": [
+        "config",
+        "mock"
+      ],
+      "request": {
+        "fields": [
+          {
+            "name": "current",
+            "label": "当前页",
+            "type": "number",
+            "required": false,
+            "desc": "当前页，类型：number",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": 1,
+            "children": []
+          },
+          {
+            "name": "pageSize",
+            "label": "每页条数",
+            "type": "number",
+            "required": false,
+            "desc": "每页条数，类型：number",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": 10,
+            "children": []
+          },
+          {
+            "name": "conditions",
+            "label": "查询条件",
+            "type": "array",
+            "required": false,
+            "desc": "查询条件，类型：array",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": [],
+            "children": []
+          },
+          {
+            "name": "feedbackStatus",
+            "label": "反馈状态",
+            "type": "enum",
+            "required": false,
+            "desc": "反馈状态，类型：enum",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": "<enum>",
+            "children": []
+          }
+        ],
+        "example": {
+          "params": {
+            "current": 1,
+            "pageSize": 10,
+            "logicOperator": "and",
+            "conditions": []
+          }
+        }
+      },
+      "response": {
+        "fields": [
+          {
+            "name": "name",
+            "label": "需求名称",
+            "type": "text",
+            "required": false,
+            "desc": "需求名称，类型：text",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config",
+              "mock"
+            ],
+            "options": [],
+            "example": "<text>",
+            "children": []
+          },
+          {
+            "name": "owner",
+            "label": "负责人",
+            "type": "text",
+            "required": false,
+            "desc": "负责人，类型：text",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config",
+              "mock"
+            ],
+            "options": [],
+            "example": "<text>",
+            "children": []
+          },
+          {
+            "name": "feedbackStatus",
+            "label": "反馈状态",
+            "type": "enum",
+            "required": false,
+            "desc": "反馈状态，类型：enum",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config",
+              "mock"
+            ],
+            "options": [],
+            "example": "<enum>",
+            "children": []
+          },
+          {
+            "name": "createTime",
+            "label": "登记时间",
+            "type": "text",
+            "required": false,
+            "desc": "登记时间，类型：text",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config",
+              "mock"
+            ],
+            "options": [],
+            "example": "<text>",
+            "children": []
+          },
+          {
+            "name": "source",
+            "label": "需求来源",
+            "type": "enum",
+            "required": false,
+            "desc": "需求来源，类型：enum",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config",
+              "mock"
+            ],
+            "options": [],
+            "example": "<enum>",
+            "children": []
+          },
+          {
+            "name": "content",
+            "label": "需求内容",
+            "type": "text",
+            "required": false,
+            "desc": "需求内容，类型：text",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": "<text>",
+            "children": []
+          },
+          {
+            "name": "id",
+            "label": "主键",
+            "type": "id",
+            "required": false,
+            "desc": "主键，类型：id（待后端确认）",
+            "descSource": "generated",
+            "source": "mock",
+            "sources": [
+              "mock"
+            ],
+            "options": [],
+            "example": "<id>",
+            "children": []
+          }
+        ],
+        "example": {
+          "data": [
+            {
+              "name": "<text>",
+              "owner": "<text>",
+              "feedbackStatus": "<enum>",
+              "createTime": "<text>",
+              "source": "<enum>",
+              "content": "<text>",
+              "id": "<id>"
+            }
+          ],
+          "total": 0
+        }
+      }
+    },
+    {
+      "method": "post",
+      "url": "/api/ipd-lite/requirement/detail",
+      "name": "详情",
+      "moduleKey": "requirement",
+      "moduleTitle": "需求管理",
+      "mockFile": "scripts/__test-fixtures__/mock/ipd-lite/requirement.mock.ts",
+      "fieldSources": [
+        "config",
+        "mock"
+      ],
+      "request": {
+        "fields": [
+          {
+            "name": "id",
+            "label": "主键",
+            "type": "id",
+            "required": true,
+            "desc": "主键，类型：id",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": "<id>",
+            "children": []
+          }
+        ],
+        "example": {
+          "params": {
+            "id": "<id>"
+          }
+        }
+      },
+      "response": {
+        "fields": [
+          {
+            "name": "name",
+            "label": "需求名称",
+            "type": "text",
+            "required": true,
+            "desc": "需求名称，类型：text",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config",
+              "mock"
+            ],
+            "options": [],
+            "example": "<text>",
+            "children": []
+          },
+          {
+            "name": "owner",
+            "label": "负责人",
+            "type": "enum",
+            "required": true,
+            "desc": "负责人，类型：enum",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config",
+              "mock"
+            ],
+            "options": [
+              {
+                "label": "张三",
+                "value": "zhangsan"
+              },
+              {
+                "label": "李四",
+                "value": "lisi"
+              }
+            ],
+            "example": "zhangsan",
+            "children": []
+          },
+          {
+            "name": "feedbackStatus",
+            "label": "反馈状态",
+            "type": "enum",
+            "required": false,
+            "desc": "反馈状态，类型：enum",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config",
+              "mock"
+            ],
+            "options": [],
+            "example": "<enum>",
+            "children": []
+          },
+          {
+            "name": "source",
+            "label": "需求来源",
+            "type": "enum",
+            "required": false,
+            "desc": "需求来源，类型：enum",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config",
+              "mock"
+            ],
+            "options": [],
+            "example": "<enum>",
+            "children": []
+          },
+          {
+            "name": "content",
+            "label": "需求内容",
+            "type": "text",
+            "required": true,
+            "desc": "需求内容，类型：text",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config",
+              "mock"
+            ],
+            "options": [],
+            "example": "<text>",
+            "children": []
+          },
+          {
+            "name": "id",
+            "label": "主键",
+            "type": "id",
+            "required": false,
+            "desc": "主键，类型：id（待后端确认）",
+            "descSource": "generated",
+            "source": "mock",
+            "sources": [
+              "mock"
+            ],
+            "options": [],
+            "example": "<id>",
+            "children": []
+          },
+          {
+            "name": "feedbackList",
+            "label": "列表",
+            "type": "array",
+            "required": false,
+            "desc": "列表，类型：array（待后端确认）",
+            "descSource": "generated",
+            "source": "mock",
+            "sources": [
+              "mock"
+            ],
+            "options": [],
+            "example": [],
+            "children": [
+              {
+                "name": "feedbackBy",
+                "label": "feedbackBy",
+                "type": "text",
+                "required": false,
+                "desc": "feedbackBy，类型：text（待后端确认）",
+                "descSource": "generated",
+                "source": "mock",
+                "sources": [
+                  "mock"
+                ],
+                "options": [],
+                "example": "<text>",
+                "children": []
+              },
+              {
+                "name": "feedbackTime",
+                "label": "时间",
+                "type": "datetime",
+                "required": false,
+                "desc": "时间，类型：datetime（待后端确认）",
+                "descSource": "generated",
+                "source": "mock",
+                "sources": [
+                  "mock"
+                ],
+                "options": [],
+                "example": "2026-05-28 12:00:00",
+                "children": []
+              },
+              {
+                "name": "content",
+                "label": "说明",
+                "type": "text",
+                "required": false,
+                "desc": "说明，类型：text（待后端确认）",
+                "descSource": "generated",
+                "source": "mock",
+                "sources": [
+                  "mock"
+                ],
+                "options": [],
+                "example": "<text>",
+                "children": []
+              }
+            ]
+          }
+        ],
+        "example": {
+          "name": "<text>",
+          "owner": "zhangsan",
+          "feedbackStatus": "<enum>",
+          "source": "<enum>",
+          "content": "<text>",
+          "id": "<id>",
+          "feedbackList": []
+        }
+      }
+    },
+    {
+      "method": "post",
+      "url": "/api/ipd-lite/requirement/add",
+      "name": "新增",
+      "moduleKey": "requirement",
+      "moduleTitle": "需求管理",
+      "mockFile": "scripts/__test-fixtures__/mock/ipd-lite/requirement.mock.ts",
+      "fieldSources": [
+        "config"
+      ],
+      "request": {
+        "fields": [
+          {
+            "name": "name",
+            "label": "需求名称",
+            "type": "text",
+            "required": true,
+            "desc": "需求名称，类型：text",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": "<text>",
+            "children": []
+          },
+          {
+            "name": "owner",
+            "label": "负责人",
+            "type": "enum",
+            "required": true,
+            "desc": "负责人，类型：enum",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [
+              {
+                "label": "张三",
+                "value": "zhangsan"
+              },
+              {
+                "label": "李四",
+                "value": "lisi"
+              }
+            ],
+            "example": "zhangsan",
+            "children": []
+          },
+          {
+            "name": "source",
+            "label": "需求来源",
+            "type": "enum",
+            "required": false,
+            "desc": "需求来源，类型：enum",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": "<enum>",
+            "children": []
+          },
+          {
+            "name": "content",
+            "label": "需求内容",
+            "type": "text",
+            "required": true,
+            "desc": "需求内容，类型：text",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": "<text>",
+            "children": []
+          }
+        ],
+        "example": {
+          "params": {
+            "name": "<text>",
+            "owner": "zhangsan",
+            "source": "<enum>",
+            "content": "<text>"
+          }
+        }
+      },
+      "response": {
+        "fields": [
+          {
+            "name": "state",
+            "label": "操作状态",
+            "type": "boolean",
+            "required": false,
+            "desc": "操作状态，类型：boolean",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": true,
+            "children": []
+          },
+          {
+            "name": "message",
+            "label": "提示信息",
+            "type": "text",
+            "required": false,
+            "desc": "提示信息，类型：text",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": "操作成功",
+            "children": []
+          }
+        ],
+        "example": {
+          "state": true,
+          "message": "操作成功"
+        }
+      }
+    },
+    {
+      "method": "post",
+      "url": "/api/ipd-lite/requirement/update",
+      "name": "更新",
+      "moduleKey": "requirement",
+      "moduleTitle": "需求管理",
+      "mockFile": "scripts/__test-fixtures__/mock/ipd-lite/requirement.mock.ts",
+      "fieldSources": [
+        "config"
+      ],
+      "request": {
+        "fields": [
+          {
+            "name": "id",
+            "label": "主键",
+            "type": "id",
+            "required": true,
+            "desc": "主键，类型：id",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": "<id>",
+            "children": []
+          },
+          {
+            "name": "name",
+            "label": "需求名称",
+            "type": "text",
+            "required": true,
+            "desc": "需求名称，类型：text",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": "<text>",
+            "children": []
+          },
+          {
+            "name": "owner",
+            "label": "负责人",
+            "type": "enum",
+            "required": true,
+            "desc": "负责人，类型：enum",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [
+              {
+                "label": "张三",
+                "value": "zhangsan"
+              },
+              {
+                "label": "李四",
+                "value": "lisi"
+              }
+            ],
+            "example": "zhangsan",
+            "children": []
+          },
+          {
+            "name": "source",
+            "label": "需求来源",
+            "type": "enum",
+            "required": false,
+            "desc": "需求来源，类型：enum",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": "<enum>",
+            "children": []
+          },
+          {
+            "name": "content",
+            "label": "需求内容",
+            "type": "text",
+            "required": true,
+            "desc": "需求内容，类型：text",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": "<text>",
+            "children": []
+          }
+        ],
+        "example": {
+          "params": {
+            "id": "<id>",
+            "name": "<text>",
+            "owner": "zhangsan",
+            "source": "<enum>",
+            "content": "<text>"
+          }
+        }
+      },
+      "response": {
+        "fields": [
+          {
+            "name": "state",
+            "label": "操作状态",
+            "type": "boolean",
+            "required": false,
+            "desc": "操作状态，类型：boolean",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": true,
+            "children": []
+          },
+          {
+            "name": "message",
+            "label": "提示信息",
+            "type": "text",
+            "required": false,
+            "desc": "提示信息，类型：text",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": "操作成功",
+            "children": []
+          }
+        ],
+        "example": {
+          "state": true,
+          "message": "操作成功"
+        }
+      }
+    },
+    {
+      "method": "post",
+      "url": "/api/ipd-lite/requirement/delete",
+      "name": "删除",
+      "moduleKey": "requirement",
+      "moduleTitle": "需求管理",
+      "mockFile": "scripts/__test-fixtures__/mock/ipd-lite/requirement.mock.ts",
+      "fieldSources": [
+        "config"
+      ],
+      "request": {
+        "fields": [
+          {
+            "name": "id",
+            "label": "主键",
+            "type": "id",
+            "required": true,
+            "desc": "主键，类型：id",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": "<id>",
+            "children": []
+          }
+        ],
+        "example": {
+          "params": {
+            "id": "<id>"
+          }
+        }
+      },
+      "response": {
+        "fields": [
+          {
+            "name": "state",
+            "label": "操作状态",
+            "type": "boolean",
+            "required": false,
+            "desc": "操作状态，类型：boolean",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": true,
+            "children": []
+          },
+          {
+            "name": "message",
+            "label": "提示信息",
+            "type": "text",
+            "required": false,
+            "desc": "提示信息，类型：text",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": "操作成功",
+            "children": []
+          }
+        ],
+        "example": {
+          "state": true,
+          "message": "操作成功"
+        }
+      }
+    },
+    {
+      "method": "post",
+      "url": "/api/ipd-lite/requirement/batchDelete",
+      "name": "批量删除",
+      "moduleKey": "requirement",
+      "moduleTitle": "需求管理",
+      "mockFile": "scripts/__test-fixtures__/mock/ipd-lite/requirement.mock.ts",
+      "fieldSources": [
+        "config"
+      ],
+      "request": {
+        "fields": [
+          {
+            "name": "ids",
+            "label": "主键集合",
+            "type": "array",
+            "required": true,
+            "desc": "主键集合，类型：array",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": [
+              "<id1>",
+              "<id2>"
+            ],
+            "children": []
+          }
+        ],
+        "example": {
+          "params": {
+            "ids": [
+              "<id1>",
+              "<id2>"
+            ]
+          }
+        }
+      },
+      "response": {
+        "fields": [
+          {
+            "name": "state",
+            "label": "操作状态",
+            "type": "boolean",
+            "required": false,
+            "desc": "操作状态，类型：boolean",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": true,
+            "children": []
+          },
+          {
+            "name": "message",
+            "label": "提示信息",
+            "type": "text",
+            "required": false,
+            "desc": "提示信息，类型：text",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": "操作成功",
+            "children": []
+          }
+        ],
+        "example": {
+          "state": true,
+          "message": "操作成功"
+        }
+      }
+    },
+    {
+      "method": "post",
+      "url": "/api/ipd-lite/requirement/feedbackStatusOptions",
+      "name": "feedbackStatusOptions",
+      "moduleKey": "requirement",
+      "moduleTitle": "需求管理",
+      "mockFile": "scripts/__test-fixtures__/mock/ipd-lite/requirement.mock.ts",
+      "fieldSources": [
+        "config"
+      ],
+      "request": {
+        "fields": [],
+        "example": {
+          "params": {}
+        }
+      },
+      "response": {
+        "fields": [
+          {
+            "name": "label",
+            "label": "显示文本",
+            "type": "text",
+            "required": false,
+            "desc": "显示文本，类型：text",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": "处理中",
+            "children": []
+          },
+          {
+            "name": "value",
+            "label": "选项值",
+            "type": "text",
+            "required": false,
+            "desc": "选项值，类型：text",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": "processing",
+            "children": []
+          }
+        ],
+        "example": {
+          "data": [
+            {
+              "label": "处理中",
+              "value": "processing"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "post",
+      "url": "/api/ipd-lite/requirement/sourceOptions",
+      "name": "sourceOptions",
+      "moduleKey": "requirement",
+      "moduleTitle": "需求管理",
+      "mockFile": "scripts/__test-fixtures__/mock/ipd-lite/requirement.mock.ts",
+      "fieldSources": [
+        "config"
+      ],
+      "request": {
+        "fields": [],
+        "example": {
+          "params": {}
+        }
+      },
+      "response": {
+        "fields": [
+          {
+            "name": "label",
+            "label": "显示文本",
+            "type": "text",
+            "required": false,
+            "desc": "显示文本，类型：text",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": "业务部门",
+            "children": []
+          },
+          {
+            "name": "value",
+            "label": "选项值",
+            "type": "text",
+            "required": false,
+            "desc": "选项值，类型：text",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": "business",
+            "children": []
+          }
+        ],
+        "example": {
+          "data": [
+            {
+              "label": "业务部门",
+              "value": "business"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "post",
+      "url": "/api/ipd-lite/trdcp-review/stageList",
+      "name": "阶段列表",
+      "moduleKey": "trdcpReview",
+      "moduleTitle": "TR/DCP评审",
+      "mockFile": "scripts/__test-fixtures__/mock/ipd-lite/trdcp-review.mock.ts",
+      "fieldSources": [
+        "config",
+        "mock"
+      ],
+      "request": {
+        "fields": [
+          {
+            "name": "current",
+            "label": "当前页",
+            "type": "number",
+            "required": false,
+            "desc": "当前页，类型：number",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": 1,
+            "children": []
+          },
+          {
+            "name": "pageSize",
+            "label": "每页条数",
+            "type": "number",
+            "required": false,
+            "desc": "每页条数，类型：number",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": 10,
+            "children": []
+          },
+          {
+            "name": "conditions",
+            "label": "查询条件",
+            "type": "array",
+            "required": false,
+            "desc": "查询条件，类型：array",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": [],
+            "children": []
+          }
+        ],
+        "example": {
+          "params": {
+            "current": 1,
+            "pageSize": 10,
+            "logicOperator": "and",
+            "conditions": []
+          }
+        }
+      },
+      "response": {
+        "fields": [
+          {
+            "name": "stageName",
+            "label": "阶段名称",
+            "type": "text",
+            "required": false,
+            "desc": "阶段名称，类型：text",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config",
+              "mock"
+            ],
+            "options": [],
+            "example": "<text>",
+            "children": []
+          },
+          {
+            "name": "reviewType",
+            "label": "评审类型",
+            "type": "text",
+            "required": false,
+            "desc": "评审类型，类型：text",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config",
+              "mock"
+            ],
+            "options": [],
+            "example": "<text>",
+            "children": []
+          },
+          {
+            "name": "startDate",
+            "label": "开始日期",
+            "type": "text",
+            "required": false,
+            "desc": "开始日期，类型：text",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config",
+              "mock"
+            ],
+            "options": [],
+            "example": "<text>",
+            "children": []
+          },
+          {
+            "name": "endDate",
+            "label": "结束日期",
+            "type": "text",
+            "required": false,
+            "desc": "结束日期，类型：text",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config",
+              "mock"
+            ],
+            "options": [],
+            "example": "<text>",
+            "children": []
+          },
+          {
+            "name": "attendees",
+            "label": "参会人",
+            "type": "text",
+            "required": false,
+            "desc": "参会人，类型：text",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config",
+              "mock"
+            ],
+            "options": [],
+            "example": "<text>",
+            "children": []
+          },
+          {
+            "name": "id",
+            "label": "主键",
+            "type": "id",
+            "required": false,
+            "desc": "主键，类型：id（待后端确认）",
+            "descSource": "generated",
+            "source": "mock",
+            "sources": [
+              "mock"
+            ],
+            "options": [],
+            "example": "<id>",
+            "children": []
+          }
+        ],
+        "example": {
+          "data": [
+            {
+              "stageName": "<text>",
+              "reviewType": "<text>",
+              "startDate": "<text>",
+              "endDate": "<text>",
+              "attendees": "<text>",
+              "id": "<id>"
+            }
+          ],
+          "total": 0
+        }
+      }
+    },
+    {
+      "method": "post",
+      "url": "/api/ipd-lite/trdcp-review/stageDetail",
+      "name": "阶段配置",
+      "moduleKey": "trdcpReview",
+      "moduleTitle": "TR/DCP评审",
+      "mockFile": "scripts/__test-fixtures__/mock/ipd-lite/trdcp-review.mock.ts",
+      "fieldSources": [
+        "config",
+        "mock"
+      ],
+      "request": {
+        "fields": [
+          {
+            "name": "id",
+            "label": "主键",
+            "type": "id",
+            "required": true,
+            "desc": "主键，类型：id",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": "<id>",
+            "children": []
+          }
+        ],
+        "example": {
+          "params": {
+            "id": "<id>"
+          }
+        }
+      },
+      "response": {
+        "fields": [
+          {
+            "name": "stageName",
+            "label": "阶段名称",
+            "type": "text",
+            "required": true,
+            "desc": "阶段名称，类型：text",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config",
+              "mock"
+            ],
+            "options": [],
+            "example": "<text>",
+            "children": []
+          },
+          {
+            "name": "reviewType",
+            "label": "评审类型",
+            "type": "text",
+            "required": true,
+            "desc": "评审类型，类型：text",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config",
+              "mock"
+            ],
+            "options": [
+              {
+                "label": "TR",
+                "value": "TR"
+              },
+              {
+                "label": "DCP",
+                "value": "DCP"
+              }
+            ],
+            "example": "<text>",
+            "children": []
+          },
+          {
+            "name": "startDate",
+            "label": "开始日期",
+            "type": "text",
+            "required": true,
+            "desc": "开始日期，类型：text",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config",
+              "mock"
+            ],
+            "options": [],
+            "example": "<text>",
+            "children": []
+          },
+          {
+            "name": "endDate",
+            "label": "结束日期",
+            "type": "text",
+            "required": true,
+            "desc": "结束日期，类型：text",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config",
+              "mock"
+            ],
+            "options": [],
+            "example": "<text>",
+            "children": []
+          },
+          {
+            "name": "attendees",
+            "label": "参会人",
+            "type": "text",
+            "required": true,
+            "desc": "参会人，类型：text",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config",
+              "mock"
+            ],
+            "options": [],
+            "example": "<text>",
+            "children": []
+          },
+          {
+            "name": "id",
+            "label": "主键",
+            "type": "id",
+            "required": false,
+            "desc": "主键，类型：id（待后端确认）",
+            "descSource": "generated",
+            "source": "mock",
+            "sources": [
+              "mock"
+            ],
+            "options": [],
+            "example": "<id>",
+            "children": []
+          }
+        ],
+        "example": {
+          "stageName": "<text>",
+          "reviewType": "<text>",
+          "startDate": "<text>",
+          "endDate": "<text>",
+          "attendees": "<text>",
+          "id": "<id>"
+        }
+      }
+    },
+    {
+      "method": "post",
+      "url": "/api/ipd-lite/trdcp-review/addStage",
+      "name": "阶段配置",
+      "moduleKey": "trdcpReview",
+      "moduleTitle": "TR/DCP评审",
+      "mockFile": "scripts/__test-fixtures__/mock/ipd-lite/trdcp-review.mock.ts",
+      "fieldSources": [
+        "config"
+      ],
+      "request": {
+        "fields": [
+          {
+            "name": "stageName",
+            "label": "阶段名称",
+            "type": "text",
+            "required": true,
+            "desc": "阶段名称，类型：text",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": "<text>",
+            "children": []
+          },
+          {
+            "name": "reviewType",
+            "label": "评审类型",
+            "type": "enum",
+            "required": true,
+            "desc": "评审类型，类型：enum",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [
+              {
+                "label": "TR",
+                "value": "TR"
+              },
+              {
+                "label": "DCP",
+                "value": "DCP"
+              }
+            ],
+            "example": "TR",
+            "children": []
+          },
+          {
+            "name": "startDate",
+            "label": "开始日期",
+            "type": "date",
+            "required": true,
+            "desc": "开始日期，类型：date",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": "2026-05-28",
+            "children": []
+          },
+          {
+            "name": "endDate",
+            "label": "结束日期",
+            "type": "date",
+            "required": true,
+            "desc": "结束日期，类型：date",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": "2026-05-28",
+            "children": []
+          },
+          {
+            "name": "attendees",
+            "label": "参会人",
+            "type": "text",
+            "required": true,
+            "desc": "参会人，类型：text",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": "<text>",
+            "children": []
+          }
+        ],
+        "example": {
+          "params": {
+            "stageName": "<text>",
+            "reviewType": "TR",
+            "startDate": "2026-05-28",
+            "endDate": "2026-05-28",
+            "attendees": "<text>"
+          }
+        }
+      },
+      "response": {
+        "fields": [
+          {
+            "name": "state",
+            "label": "操作状态",
+            "type": "boolean",
+            "required": false,
+            "desc": "操作状态，类型：boolean",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": true,
+            "children": []
+          },
+          {
+            "name": "message",
+            "label": "提示信息",
+            "type": "text",
+            "required": false,
+            "desc": "提示信息，类型：text",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": "操作成功",
+            "children": []
+          }
+        ],
+        "example": {
+          "state": true,
+          "message": "操作成功"
+        }
+      }
+    },
+    {
+      "method": "post",
+      "url": "/api/ipd-lite/trdcp-review/updateStage",
+      "name": "阶段配置",
+      "moduleKey": "trdcpReview",
+      "moduleTitle": "TR/DCP评审",
+      "mockFile": "scripts/__test-fixtures__/mock/ipd-lite/trdcp-review.mock.ts",
+      "fieldSources": [
+        "config"
+      ],
+      "request": {
+        "fields": [
+          {
+            "name": "id",
+            "label": "主键",
+            "type": "id",
+            "required": true,
+            "desc": "主键，类型：id",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": "<id>",
+            "children": []
+          },
+          {
+            "name": "stageName",
+            "label": "阶段名称",
+            "type": "text",
+            "required": true,
+            "desc": "阶段名称，类型：text",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": "<text>",
+            "children": []
+          },
+          {
+            "name": "reviewType",
+            "label": "评审类型",
+            "type": "enum",
+            "required": true,
+            "desc": "评审类型，类型：enum",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [
+              {
+                "label": "TR",
+                "value": "TR"
+              },
+              {
+                "label": "DCP",
+                "value": "DCP"
+              }
+            ],
+            "example": "TR",
+            "children": []
+          },
+          {
+            "name": "startDate",
+            "label": "开始日期",
+            "type": "date",
+            "required": true,
+            "desc": "开始日期，类型：date",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": "2026-05-28",
+            "children": []
+          },
+          {
+            "name": "endDate",
+            "label": "结束日期",
+            "type": "date",
+            "required": true,
+            "desc": "结束日期，类型：date",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": "2026-05-28",
+            "children": []
+          },
+          {
+            "name": "attendees",
+            "label": "参会人",
+            "type": "text",
+            "required": true,
+            "desc": "参会人，类型：text",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": "<text>",
+            "children": []
+          }
+        ],
+        "example": {
+          "params": {
+            "id": "<id>",
+            "stageName": "<text>",
+            "reviewType": "TR",
+            "startDate": "2026-05-28",
+            "endDate": "2026-05-28",
+            "attendees": "<text>"
+          }
+        }
+      },
+      "response": {
+        "fields": [
+          {
+            "name": "state",
+            "label": "操作状态",
+            "type": "boolean",
+            "required": false,
+            "desc": "操作状态，类型：boolean",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": true,
+            "children": []
+          },
+          {
+            "name": "message",
+            "label": "提示信息",
+            "type": "text",
+            "required": false,
+            "desc": "提示信息，类型：text",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": "操作成功",
+            "children": []
+          }
+        ],
+        "example": {
+          "state": true,
+          "message": "操作成功"
+        }
+      }
+    },
+    {
+      "method": "post",
+      "url": "/api/ipd-lite/trdcp-review/deleteStage",
+      "name": "删除",
+      "moduleKey": "trdcpReview",
+      "moduleTitle": "TR/DCP评审",
+      "mockFile": "scripts/__test-fixtures__/mock/ipd-lite/trdcp-review.mock.ts",
+      "fieldSources": [
+        "config"
+      ],
+      "request": {
+        "fields": [
+          {
+            "name": "id",
+            "label": "主键",
+            "type": "id",
+            "required": true,
+            "desc": "主键，类型：id",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": "<id>",
+            "children": []
+          }
+        ],
+        "example": {
+          "params": {
+            "id": "<id>"
+          }
+        }
+      },
+      "response": {
+        "fields": [
+          {
+            "name": "state",
+            "label": "操作状态",
+            "type": "boolean",
+            "required": false,
+            "desc": "操作状态，类型：boolean",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": true,
+            "children": []
+          },
+          {
+            "name": "message",
+            "label": "提示信息",
+            "type": "text",
+            "required": false,
+            "desc": "提示信息，类型：text",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": "操作成功",
+            "children": []
+          }
+        ],
+        "example": {
+          "state": true,
+          "message": "操作成功"
+        }
+      }
+    }
+  ]
+}

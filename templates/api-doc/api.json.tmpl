@@ -1,39 +1,40 @@
 {
   "module": "{{MODULE}}",
   "appName": "{{APP_NAME}}",
+  "title": "{{TITLE}}",
   "basePath": "{{BASE_PATH}}",
   "bodyParser": "json_and_form_encoded",
   "generationMode": "{{GENERATION_MODE}}",
+  "mode": "{{MODE}}",
   "generatedAt": "{{GENERATED_AT}}",
+  "mockCoverage": {
+    "scanned": 0,
+    "documented": 0,
+    "percent": 0
+  },
   "fieldCoverage": {
     "total": 0,
     "withDesc": 0,
     "generatedDesc": 0,
-    "percent": 0
+    "percent": 0,
+    "bySource": {}
   },
-  "fields": [
-    {
-      "name": "<FILL: fieldName>",
-      "label": "<FILL: 中文名>",
-      "type": "<FILL: text|number|enum|date|datetime|phone|email|amount|cname|address|boolean>",
-      "required": false,
-      "desc": "<FILL: 字段描述>",
-      "descSource": "intent",
-      "options": [],
-      "example": "<FILL: 示例值>"
-    }
-  ],
+  "fields": [],
   "interfaces": [
     {
       "method": "post",
-      "url": "<FILL: /api/module/app/list>",
-      "name": "<FILL: 接口中文名>",
+      "url": "/api/module/app/list",
+      "name": "分页列表",
+      "moduleKey": "app",
+      "moduleTitle": "页面",
+      "fieldSources": ["config", "mock"],
       "request": {
-        "params": {}
+        "fields": [],
+        "example": { "params": {} }
       },
       "response": {
-        "data": [],
-        "total": 0
+        "fields": [],
+        "example": { "data": [], "total": 0 }
       }
     }
   ]

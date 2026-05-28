@@ -1,7 +1,6 @@
-# page/07-api-doc · 根据 mock 生成接口文档（v0.4）
+# page/07-api-doc · 生成后端联调版接口文档（v0.4.2）
 
-> **目的**：页面 / 应用创建完成后，根据 `generated_urls`、`mock_generated`、`intent.fields` 生成后端可实现的接口文档。
-> 默认产物：Markdown + JSON。
+> **目的**：页面 / 应用创建完成后，根据 `generated_urls`、mock handlers、页面配置和 `intent.fields` 生成可用于后端开发与联调的 Markdown + JSON 接口文档。
 
 ---
 
@@ -11,25 +10,54 @@
 - `generated_urls`（来自 `03-generate.md`）
 - `mock_generated` 与 `url_consistency`（来自 `04-mock.md`）
 - 生成的 mock 文件或业务中间件 handlers
+- 可选：页面配置源，如 `MODULE_CONFIGS`、`ACTION_FORM_CONFIGS`
 
 ---
 
-## 输出位置
+## 模式判断
 
-默认写到组件工程：
+### 单页面模式
+
+满足以下任一条件时走单页面模式：
+- 只有 1 个页面 / 1 个业务 baseUrl
+- 只有 1 个 mock 文件
+- 输出文档语义明确是某个页面
+
+输出：
 
 ```text
 <component_package>/docs/api/<module>/<appName>.md
 <component_package>/docs/api/<module>/<appName>.api.json
 ```
 
-如果目标工程已有 `docs/api/`、`api-docs/` 或团队约定目录，优先复用；否则按默认路径创建。
+### 多页面套件模式
+
+满足以下任一条件时走 suite mode：
+- 一次生成多个页面
+- 存在多个 mock 文件
+- 存在多个业务 baseUrl，如 `/api/ipd/requirement`、`/api/ipd/task-mgmt`
+- 存在公共 options、动作弹窗、看板指标等跨页面接口
+
+输出仍放在同一目录，但 Markdown 必须按页面 / 模块分章：
+
+```text
+<component_package>/docs/api/<module>/<suiteName>.md
+<component_package>/docs/api/<module>/<suiteName>.api.json
+```
 
 ---
 
-## Step 1 · 标准化字段
+## 字段来源
 
-把 `intent.fields` 统一为以下结构，旧字段缺失时兼容补齐：
+字段按以下顺序合并，后者只能补充，不能覆盖更明确的来源：
+
+1. `intent.fields`
+2. 页面配置：`MODULE_CONFIGS.columns`、`filters`、`searchFields`、`formFields`、`detailFields`、`detailLists`、`extraLists`、`optionModels`
+3. 动作配置：`ACTION_FORM_CONFIGS.fields`、`submitUrl`、`addUrl`、`detailUrl`
+4. mock 返回对象字段
+5. URL 分类推断字段，如分页、主键、批量主键、操作结果
+
+字段标准结构：
 
 ```ts
 type ApiField = {
@@ -38,100 +66,111 @@ type ApiField = {
   type: string;
   required: boolean;
   desc: string;
+  descSource: 'intent' | 'config' | 'mock' | 'generated';
+  sources: string[];
   options?: Array<{ label: string; value: string | number | boolean }>;
-  example?: unknown;
-  descSource: 'intent' | 'generated';
+  example: unknown;
+  children?: ApiField[];
 };
 ```
 
-补齐规则：
-- `label` 缺失 → 用 `name`
-- `type` 缺失 → 用 `text`
-- `required` 缺失 → 默认 `false`
-- `desc` 缺失 → 生成 `${label}，类型：${type}（待后端确认）`
-- `example` 缺失 → 根据 type/options 生成保守示例
+缺少描述时只能按字段名 / 类型生成保守描述，并标记“待后端确认”。
 
 ---
 
-## Step 2 · 接口分类
+## 接口分类
 
 从 URL 后缀推导接口用途：
 
-| 后缀 | 名称 | 请求 | 响应 |
+| 后缀 / 形态 | 名称 | 请求字段 | 响应字段 |
 | --- | --- | --- | --- |
-| `/list` | 分页列表 | `current`、`pageSize`、`conditions` | `{ data: ApiField[], total: number }` |
-| `/tree` / `/treeList` | 树数据 | 可选筛选字段 | `[{ value, label, children }]` |
-| `/<field>Options` | 枚举选项 | 空对象或筛选参数 | `{ data: [{ label, value }] }` |
-| `/info` | 详情 | `{ id }` | `{ state, data }` |
-| `/add` | 新增 | 字段表单 | `{ state, message }` |
-| `/update` | 更新 | `{ id, ...fields }` | `{ state, message }` |
-| `/delete` | 删除 | `{ id }` | `{ state, message }` |
-| `/batchDelete` | 批量删除 | `{ ids: [] }` | `{ state, message }` |
+| `/list`、`*List` | 分页列表 / 子列表 | `current`、`pageSize`、`conditions` + filters/searchFields | columns/detailFields/mock list fields |
+| `/tree`、`/treeList` | 树数据 | 可选筛选字段 | `value`、`label`、`children` |
+| `/*Options`、`/common/*Options` | 选项数据 | 空对象或筛选字段 | `label`、`value`，options 取 mock 示例 |
+| `/info`、`/detail`、`*Detail` | 详情 | `id` | detailFields/formFields/mock detail fields |
+| `/data`、`*Data` | 看板 / 指标数据 | 空对象或筛选字段 | mock 返回对象字段 |
+| `/add`、`add*` | 新增 / 动作新增 | formFields 或 ACTION_FORM_CONFIGS.fields | `state`、`message` |
+| `/update`、`update*` | 更新 / 动作更新 | `id` + formFields 或 ACTION_FORM_CONFIGS.fields | `state`、`message` |
+| `/delete`、`delete*` | 删除 | `id` | `state`、`message` |
+| `/batchDelete` | 批量删除 | `ids` | `state`、`message` |
 
-未命中固定后缀时，按 `mock_generated.interfaces[].purpose` 生成“自定义接口”。
+未命中固定后缀时，按 mock handler、动作配置和字段来源生成自定义接口，不能只写接口名。
 
 ---
 
-## Step 3 · Markdown 文档结构
-
-Markdown 必须包含：
+## Markdown 必须包含
 
 ```md
-# <页面中文名> 接口文档
+# <页面 / 套件> 接口文档
 
 ## 基本信息
-- 模块：<module>
-- 页面：<appName>
-- 请求前缀：/api/<module>/<appName>
-- 请求体：JSON 或 application/x-www-form-urlencoded（F10 Utils.request 兼容）
+- 模块
+- 页面 / 应用
+- 文档模式：single / suite
+- 请求前缀
+- 接口数量
+- 请求体：JSON 或 application/x-www-form-urlencoded
+- 字段来源
 
-## 字段说明
-| 字段 | 名称 | 类型 | 必填 | 描述 | 示例 |
+## 字段覆盖率
 
 ## 接口列表
-| 方法 | URL | 说明 |
 
 ## 接口详情
-### 1. 分页列表
-- Method: POST
-- URL: /api/<module>/<appName>/list
-- Request
-- Response
+### 1. <接口名>
+- Method
+- URL
+- 模块
+- 字段来源
+- Request 字段表
+- Request 示例
+- Response 字段表
+- Response 示例
 ```
 
-描述缺失的字段要标记“待后端确认”，避免把 AI 推断伪装成业务事实。
+禁止只写“通用请求 / 通用响应”。每个接口都必须有独立 Request / Response。
 
 ---
 
-## Step 4 · JSON 文档结构
-
-`.api.json` 用于后续自动校验 / 二次生成：
+## JSON 必须包含
 
 ```json
 {
   "module": "<module>",
   "appName": "<appName>",
-  "basePath": "/api/<module>/<appName>",
+  "basePath": "/api/<module>",
   "bodyParser": "json_and_form_encoded",
-  "fields": [
-    {
-      "name": "status",
-      "label": "状态",
-      "type": "enum",
-      "required": false,
-      "desc": "状态",
-      "descSource": "intent",
-      "options": [{ "label": "启用", "value": "enabled" }],
-      "example": "enabled"
-    }
-  ],
+  "generationMode": "in_flow_single | in_flow_suite | standalone_single | standalone_suite",
+  "mode": "single | suite",
+  "mockCoverage": {
+    "scanned": 0,
+    "documented": 0,
+    "percent": 100
+  },
+  "fieldCoverage": {
+    "total": 0,
+    "withDesc": 0,
+    "generatedDesc": 0,
+    "percent": 0,
+    "bySource": {}
+  },
+  "fields": [],
   "interfaces": [
     {
       "method": "post",
-      "url": "/api/<module>/<appName>/list",
+      "url": "/api/module/app/list",
       "name": "分页列表",
-      "request": { "params": {} },
-      "response": { "data": [], "total": 0 }
+      "moduleKey": "app",
+      "moduleTitle": "页面名称",
+      "fieldSources": ["intent", "config", "mock"],
+      "request": {
+        "fields": [],
+        "example": { "params": {} }
+      },
+      "response": {
+        "fields": [],
+        "example": { "data": [], "total": 0 }
+      }
     }
   ]
 }
@@ -139,23 +178,34 @@ Markdown 必须包含：
 
 ---
 
-## Step 5 · 覆盖率校验
+## 硬性校验
 
-必须输出字段覆盖率：
+生成完成前必须检查：
 
-```yaml
-field_coverage:
-  total: <字段数>
-  with_desc: <descSource=intent 的字段数>
-  generated_desc: <descSource=generated 的字段数>
-  percent: <with_desc / total>
+- [ ] Markdown 与 JSON 都已生成
+- [ ] `interfaces.length` 与 mock / `generated_urls` 中业务接口数量一致
+- [ ] suite mode 下接口按页面 / 模块分章
+- [ ] 每个接口都有 `request.fields`、`request.example`、`response.fields`、`response.example`
+- [ ] 每个字段都有 `name`、`label`、`type`、`required`、`desc`、`example`、`sources`
+- [ ] 缺少原始描述的字段明确标记“待后端确认”
+- [ ] 字段覆盖率按真实字段计算，不允许只写总数
+- [ ] 文档注明请求体兼容 JSON 与 `application/x-www-form-urlencoded`
+
+任一校验失败，接口文档不能算完成，必须回到 mock / 字段来源补齐。
+
+---
+
+## CLI 兜底
+
+老项目或已生成 mock 可直接运行：
+
+```bash
+npx epoint-f10code-gen gen-api-doc <mock-file|mock-dir> \
+  --config <src/views/.../config.js> \
+  --api-prefix /api/<module>
 ```
 
-如果 `generated_desc > 0`，Markdown 顶部加一句：
-
-```md
-> 注：部分字段描述由字段名和类型推断，已标记“待后端确认”。
-```
+目录输入自动进入 suite mode；`--api-prefix` 用于只收集业务接口，避免把 `/resourceaction/*`、`/auth/*`、`/themedataaction/*` 等框架端点写进业务文档。
 
 ---
 
@@ -165,6 +215,7 @@ field_coverage:
 api_doc_generated:
   markdown: <component_package>/docs/api/<module>/<appName>.md
   json: <component_package>/docs/api/<module>/<appName>.api.json
+  mode: single | suite
   interface_count: <number>
   field_coverage:
     total: <number>
@@ -172,16 +223,6 @@ api_doc_generated:
     generated_desc: <number>
     percent: <number>
 ```
-
----
-
-## ✓ 检验句
-
-- [ ] Markdown 与 JSON 都已生成
-- [ ] 接口数量与 `generated_urls` / `mock_generated.interfaces` 对齐
-- [ ] 字段表包含 `name` / `label` / `type` / `required` / `desc` / `example`
-- [ ] 缺少原始描述的字段明确标记“待后端确认”
-- [ ] 文档注明请求体兼容 JSON 与 `application/x-www-form-urlencoded`
 
 ---
 

@@ -1,96 +1,253 @@
 {
   "module": "demo",
   "appName": "order",
+  "title": "order 接口文档",
   "basePath": "/api/demo/order",
   "bodyParser": "json_and_form_encoded",
-  "generationMode": "standalone",
-  "generatedAt": "2026-05-28 06:35:23",
+  "generationMode": "standalone_single",
+  "mode": "single",
+  "generatedAt": "2026-05-28 10:50:09",
+  "mockCoverage": {
+    "scanned": 6,
+    "documented": 6,
+    "percent": 100
+  },
   "fieldCoverage": {
-    "total": 8,
-    "withDesc": 0,
-    "generatedDesc": 8,
-    "percent": 0
+    "total": 15,
+    "withDesc": 8,
+    "generatedDesc": 7,
+    "percent": 53,
+    "bySource": {
+      "config": 8,
+      "mock": 8
+    }
   },
   "fields": [
+    {
+      "name": "current",
+      "label": "当前页",
+      "type": "number",
+      "required": false,
+      "desc": "当前页，类型：number",
+      "descSource": "config",
+      "source": "config",
+      "sources": [
+        "config"
+      ],
+      "options": [],
+      "example": 1,
+      "children": []
+    },
+    {
+      "name": "pageSize",
+      "label": "每页条数",
+      "type": "number",
+      "required": false,
+      "desc": "每页条数，类型：number",
+      "descSource": "config",
+      "source": "config",
+      "sources": [
+        "config"
+      ],
+      "options": [],
+      "example": 10,
+      "children": []
+    },
+    {
+      "name": "conditions",
+      "label": "查询条件",
+      "type": "array",
+      "required": false,
+      "desc": "查询条件，类型：array",
+      "descSource": "config",
+      "source": "config",
+      "sources": [
+        "config"
+      ],
+      "options": [],
+      "example": [],
+      "children": []
+    },
+    {
+      "name": "id",
+      "label": "主键",
+      "type": "id",
+      "required": true,
+      "desc": "主键，类型：id",
+      "descSource": "config",
+      "source": "config",
+      "sources": [
+        "mock",
+        "config"
+      ],
+      "options": [],
+      "example": "<id>",
+      "children": []
+    },
     {
       "name": "name",
       "label": "名称",
       "type": "text",
       "required": false,
-      "desc": "名称（待后端确认）",
+      "desc": "名称，类型：text（待后端确认）",
       "descSource": "generated",
+      "source": "mock",
+      "sources": [
+        "mock"
+      ],
       "options": [],
-      "example": "<text>"
+      "example": "<text>",
+      "children": []
     },
     {
       "name": "amount",
       "label": "金额",
       "type": "amount",
       "required": false,
-      "desc": "金额（待后端确认）",
+      "desc": "金额，类型：amount（待后端确认）",
       "descSource": "generated",
+      "source": "mock",
+      "sources": [
+        "mock"
+      ],
       "options": [],
-      "example": 0
+      "example": 0,
+      "children": []
     },
     {
       "name": "status",
       "label": "状态",
       "type": "enum",
       "required": false,
-      "desc": "状态（待后端确认）",
+      "desc": "状态，类型：enum（待后端确认）",
       "descSource": "generated",
+      "source": "mock",
+      "sources": [
+        "mock"
+      ],
       "options": [],
-      "example": "<enum>"
+      "example": "<enum>",
+      "children": []
     },
     {
       "name": "customerName",
       "label": "名称",
       "type": "text",
       "required": false,
-      "desc": "名称（待后端确认）",
+      "desc": "名称，类型：text（待后端确认）",
       "descSource": "generated",
+      "source": "mock",
+      "sources": [
+        "mock"
+      ],
       "options": [],
-      "example": "<text>"
+      "example": "<text>",
+      "children": []
     },
     {
       "name": "customerPhone",
       "label": "电话",
       "type": "phone",
       "required": false,
-      "desc": "电话（待后端确认）",
+      "desc": "电话，类型：phone（待后端确认）",
       "descSource": "generated",
+      "source": "mock",
+      "sources": [
+        "mock"
+      ],
       "options": [],
-      "example": "13900000000"
+      "example": "13900000000",
+      "children": []
     },
     {
       "name": "createTime",
       "label": "时间",
       "type": "datetime",
       "required": false,
-      "desc": "时间（待后端确认）",
+      "desc": "时间，类型：datetime（待后端确认）",
       "descSource": "generated",
+      "source": "mock",
+      "sources": [
+        "mock"
+      ],
       "options": [],
-      "example": "2026-05-28 12:00:00"
+      "example": "2026-05-28 12:00:00",
+      "children": []
     },
     {
       "name": "remark",
-      "label": "备注",
+      "label": "说明",
       "type": "text",
       "required": false,
-      "desc": "备注（待后端确认）",
+      "desc": "说明，类型：text（待后端确认）",
       "descSource": "generated",
+      "source": "mock",
+      "sources": [
+        "mock"
+      ],
       "options": [],
-      "example": "<text>"
+      "example": "<text>",
+      "children": []
     },
     {
-      "name": "id",
-      "label": "主键",
-      "type": "id",
+      "name": "state",
+      "label": "操作状态",
+      "type": "boolean",
       "required": false,
-      "desc": "主键（待后端确认）",
-      "descSource": "generated",
+      "desc": "操作状态，类型：boolean",
+      "descSource": "config",
+      "source": "config",
+      "sources": [
+        "config"
+      ],
       "options": [],
-      "example": "<id>"
+      "example": true,
+      "children": []
+    },
+    {
+      "name": "message",
+      "label": "提示信息",
+      "type": "text",
+      "required": false,
+      "desc": "提示信息，类型：text",
+      "descSource": "config",
+      "source": "config",
+      "sources": [
+        "config"
+      ],
+      "options": [],
+      "example": "操作成功",
+      "children": []
+    },
+    {
+      "name": "label",
+      "label": "显示文本",
+      "type": "text",
+      "required": false,
+      "desc": "显示文本，类型：text",
+      "descSource": "config",
+      "source": "config",
+      "sources": [
+        "config"
+      ],
+      "options": [],
+      "example": "待处理",
+      "children": []
+    },
+    {
+      "name": "value",
+      "label": "选项值",
+      "type": "text",
+      "required": false,
+      "desc": "选项值，类型：text",
+      "descSource": "config",
+      "source": "config",
+      "sources": [
+        "config"
+      ],
+      "options": [],
+      "example": "pending",
+      "children": []
     }
   ],
   "interfaces": [
@@ -98,43 +255,870 @@
       "method": "post",
       "url": "/api/demo/order/list",
       "name": "分页列表",
-      "requestSchema": "list",
-      "responseSchema": "pagedList"
+      "moduleKey": "order",
+      "moduleTitle": "order",
+      "mockFile": "scripts/__test-fixtures__/mock/demo/order.mock.ts",
+      "fieldSources": [
+        "config",
+        "mock"
+      ],
+      "request": {
+        "fields": [
+          {
+            "name": "current",
+            "label": "当前页",
+            "type": "number",
+            "required": false,
+            "desc": "当前页，类型：number",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": 1,
+            "children": []
+          },
+          {
+            "name": "pageSize",
+            "label": "每页条数",
+            "type": "number",
+            "required": false,
+            "desc": "每页条数，类型：number",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": 10,
+            "children": []
+          },
+          {
+            "name": "conditions",
+            "label": "查询条件",
+            "type": "array",
+            "required": false,
+            "desc": "查询条件，类型：array",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": [],
+            "children": []
+          }
+        ],
+        "example": {
+          "params": {
+            "current": 1,
+            "pageSize": 10,
+            "logicOperator": "and",
+            "conditions": []
+          }
+        }
+      },
+      "response": {
+        "fields": [
+          {
+            "name": "id",
+            "label": "主键",
+            "type": "id",
+            "required": false,
+            "desc": "主键，类型：id（待后端确认）",
+            "descSource": "generated",
+            "source": "mock",
+            "sources": [
+              "mock"
+            ],
+            "options": [],
+            "example": "<id>",
+            "children": []
+          },
+          {
+            "name": "name",
+            "label": "名称",
+            "type": "text",
+            "required": false,
+            "desc": "名称，类型：text（待后端确认）",
+            "descSource": "generated",
+            "source": "mock",
+            "sources": [
+              "mock"
+            ],
+            "options": [],
+            "example": "<text>",
+            "children": []
+          },
+          {
+            "name": "amount",
+            "label": "金额",
+            "type": "amount",
+            "required": false,
+            "desc": "金额，类型：amount（待后端确认）",
+            "descSource": "generated",
+            "source": "mock",
+            "sources": [
+              "mock"
+            ],
+            "options": [],
+            "example": 0,
+            "children": []
+          },
+          {
+            "name": "status",
+            "label": "状态",
+            "type": "enum",
+            "required": false,
+            "desc": "状态，类型：enum（待后端确认）",
+            "descSource": "generated",
+            "source": "mock",
+            "sources": [
+              "mock"
+            ],
+            "options": [],
+            "example": "<enum>",
+            "children": []
+          },
+          {
+            "name": "customerName",
+            "label": "名称",
+            "type": "text",
+            "required": false,
+            "desc": "名称，类型：text（待后端确认）",
+            "descSource": "generated",
+            "source": "mock",
+            "sources": [
+              "mock"
+            ],
+            "options": [],
+            "example": "<text>",
+            "children": []
+          },
+          {
+            "name": "customerPhone",
+            "label": "电话",
+            "type": "phone",
+            "required": false,
+            "desc": "电话，类型：phone（待后端确认）",
+            "descSource": "generated",
+            "source": "mock",
+            "sources": [
+              "mock"
+            ],
+            "options": [],
+            "example": "13900000000",
+            "children": []
+          },
+          {
+            "name": "createTime",
+            "label": "时间",
+            "type": "datetime",
+            "required": false,
+            "desc": "时间，类型：datetime（待后端确认）",
+            "descSource": "generated",
+            "source": "mock",
+            "sources": [
+              "mock"
+            ],
+            "options": [],
+            "example": "2026-05-28 12:00:00",
+            "children": []
+          },
+          {
+            "name": "remark",
+            "label": "说明",
+            "type": "text",
+            "required": false,
+            "desc": "说明，类型：text（待后端确认）",
+            "descSource": "generated",
+            "source": "mock",
+            "sources": [
+              "mock"
+            ],
+            "options": [],
+            "example": "<text>",
+            "children": []
+          }
+        ],
+        "example": {
+          "data": [
+            {
+              "id": "<id>",
+              "name": "<text>",
+              "amount": 0,
+              "status": "<enum>",
+              "customerName": "<text>",
+              "customerPhone": "13900000000",
+              "createTime": "2026-05-28 12:00:00",
+              "remark": "<text>"
+            }
+          ],
+          "total": 0
+        }
+      }
     },
     {
       "method": "post",
       "url": "/api/demo/order/info",
       "name": "详情",
-      "requestSchema": "idOnly",
-      "responseSchema": "item"
+      "moduleKey": "order",
+      "moduleTitle": "order",
+      "mockFile": "scripts/__test-fixtures__/mock/demo/order.mock.ts",
+      "fieldSources": [
+        "config",
+        "mock"
+      ],
+      "request": {
+        "fields": [
+          {
+            "name": "id",
+            "label": "主键",
+            "type": "id",
+            "required": true,
+            "desc": "主键，类型：id",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": "<id>",
+            "children": []
+          }
+        ],
+        "example": {
+          "params": {
+            "id": "<id>"
+          }
+        }
+      },
+      "response": {
+        "fields": [
+          {
+            "name": "id",
+            "label": "主键",
+            "type": "id",
+            "required": false,
+            "desc": "主键，类型：id（待后端确认）",
+            "descSource": "generated",
+            "source": "mock",
+            "sources": [
+              "mock"
+            ],
+            "options": [],
+            "example": "<id>",
+            "children": []
+          },
+          {
+            "name": "name",
+            "label": "名称",
+            "type": "text",
+            "required": false,
+            "desc": "名称，类型：text（待后端确认）",
+            "descSource": "generated",
+            "source": "mock",
+            "sources": [
+              "mock"
+            ],
+            "options": [],
+            "example": "<text>",
+            "children": []
+          },
+          {
+            "name": "amount",
+            "label": "金额",
+            "type": "amount",
+            "required": false,
+            "desc": "金额，类型：amount（待后端确认）",
+            "descSource": "generated",
+            "source": "mock",
+            "sources": [
+              "mock"
+            ],
+            "options": [],
+            "example": 0,
+            "children": []
+          },
+          {
+            "name": "status",
+            "label": "状态",
+            "type": "enum",
+            "required": false,
+            "desc": "状态，类型：enum（待后端确认）",
+            "descSource": "generated",
+            "source": "mock",
+            "sources": [
+              "mock"
+            ],
+            "options": [],
+            "example": "<enum>",
+            "children": []
+          },
+          {
+            "name": "customerName",
+            "label": "名称",
+            "type": "text",
+            "required": false,
+            "desc": "名称，类型：text（待后端确认）",
+            "descSource": "generated",
+            "source": "mock",
+            "sources": [
+              "mock"
+            ],
+            "options": [],
+            "example": "<text>",
+            "children": []
+          },
+          {
+            "name": "customerPhone",
+            "label": "电话",
+            "type": "phone",
+            "required": false,
+            "desc": "电话，类型：phone（待后端确认）",
+            "descSource": "generated",
+            "source": "mock",
+            "sources": [
+              "mock"
+            ],
+            "options": [],
+            "example": "13900000000",
+            "children": []
+          },
+          {
+            "name": "createTime",
+            "label": "时间",
+            "type": "datetime",
+            "required": false,
+            "desc": "时间，类型：datetime（待后端确认）",
+            "descSource": "generated",
+            "source": "mock",
+            "sources": [
+              "mock"
+            ],
+            "options": [],
+            "example": "2026-05-28 12:00:00",
+            "children": []
+          },
+          {
+            "name": "remark",
+            "label": "说明",
+            "type": "text",
+            "required": false,
+            "desc": "说明，类型：text（待后端确认）",
+            "descSource": "generated",
+            "source": "mock",
+            "sources": [
+              "mock"
+            ],
+            "options": [],
+            "example": "<text>",
+            "children": []
+          }
+        ],
+        "example": {
+          "state": true,
+          "data": {
+            "id": "<id>",
+            "name": "<text>",
+            "amount": 0,
+            "status": "<enum>",
+            "customerName": "<text>",
+            "customerPhone": "13900000000",
+            "createTime": "2026-05-28 12:00:00",
+            "remark": "<text>"
+          }
+        }
+      }
     },
     {
       "method": "post",
       "url": "/api/demo/order/add",
       "name": "新增",
-      "requestSchema": "fields",
-      "responseSchema": "success"
+      "moduleKey": "order",
+      "moduleTitle": "order",
+      "mockFile": "scripts/__test-fixtures__/mock/demo/order.mock.ts",
+      "fieldSources": [
+        "mock",
+        "config"
+      ],
+      "request": {
+        "fields": [
+          {
+            "name": "name",
+            "label": "名称",
+            "type": "text",
+            "required": false,
+            "desc": "名称，类型：text（待后端确认）",
+            "descSource": "generated",
+            "source": "mock",
+            "sources": [
+              "mock"
+            ],
+            "options": [],
+            "example": "<text>",
+            "children": []
+          },
+          {
+            "name": "amount",
+            "label": "金额",
+            "type": "amount",
+            "required": false,
+            "desc": "金额，类型：amount（待后端确认）",
+            "descSource": "generated",
+            "source": "mock",
+            "sources": [
+              "mock"
+            ],
+            "options": [],
+            "example": 0,
+            "children": []
+          },
+          {
+            "name": "status",
+            "label": "状态",
+            "type": "enum",
+            "required": false,
+            "desc": "状态，类型：enum（待后端确认）",
+            "descSource": "generated",
+            "source": "mock",
+            "sources": [
+              "mock"
+            ],
+            "options": [],
+            "example": "<enum>",
+            "children": []
+          },
+          {
+            "name": "customerName",
+            "label": "名称",
+            "type": "text",
+            "required": false,
+            "desc": "名称，类型：text（待后端确认）",
+            "descSource": "generated",
+            "source": "mock",
+            "sources": [
+              "mock"
+            ],
+            "options": [],
+            "example": "<text>",
+            "children": []
+          },
+          {
+            "name": "customerPhone",
+            "label": "电话",
+            "type": "phone",
+            "required": false,
+            "desc": "电话，类型：phone（待后端确认）",
+            "descSource": "generated",
+            "source": "mock",
+            "sources": [
+              "mock"
+            ],
+            "options": [],
+            "example": "13900000000",
+            "children": []
+          },
+          {
+            "name": "createTime",
+            "label": "时间",
+            "type": "datetime",
+            "required": false,
+            "desc": "时间，类型：datetime（待后端确认）",
+            "descSource": "generated",
+            "source": "mock",
+            "sources": [
+              "mock"
+            ],
+            "options": [],
+            "example": "2026-05-28 12:00:00",
+            "children": []
+          },
+          {
+            "name": "remark",
+            "label": "说明",
+            "type": "text",
+            "required": false,
+            "desc": "说明，类型：text（待后端确认）",
+            "descSource": "generated",
+            "source": "mock",
+            "sources": [
+              "mock"
+            ],
+            "options": [],
+            "example": "<text>",
+            "children": []
+          }
+        ],
+        "example": {
+          "params": {
+            "name": "<text>",
+            "amount": 0,
+            "status": "<enum>",
+            "customerName": "<text>",
+            "customerPhone": "13900000000",
+            "createTime": "2026-05-28 12:00:00",
+            "remark": "<text>"
+          }
+        }
+      },
+      "response": {
+        "fields": [
+          {
+            "name": "state",
+            "label": "操作状态",
+            "type": "boolean",
+            "required": false,
+            "desc": "操作状态，类型：boolean",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": true,
+            "children": []
+          },
+          {
+            "name": "message",
+            "label": "提示信息",
+            "type": "text",
+            "required": false,
+            "desc": "提示信息，类型：text",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": "操作成功",
+            "children": []
+          }
+        ],
+        "example": {
+          "state": true,
+          "message": "操作成功"
+        }
+      }
     },
     {
       "method": "post",
       "url": "/api/demo/order/update",
       "name": "更新",
-      "requestSchema": "idAndFields",
-      "responseSchema": "success"
+      "moduleKey": "order",
+      "moduleTitle": "order",
+      "mockFile": "scripts/__test-fixtures__/mock/demo/order.mock.ts",
+      "fieldSources": [
+        "config",
+        "mock"
+      ],
+      "request": {
+        "fields": [
+          {
+            "name": "id",
+            "label": "主键",
+            "type": "id",
+            "required": true,
+            "desc": "主键，类型：id",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": "<id>",
+            "children": []
+          },
+          {
+            "name": "name",
+            "label": "名称",
+            "type": "text",
+            "required": false,
+            "desc": "名称，类型：text（待后端确认）",
+            "descSource": "generated",
+            "source": "mock",
+            "sources": [
+              "mock"
+            ],
+            "options": [],
+            "example": "<text>",
+            "children": []
+          },
+          {
+            "name": "amount",
+            "label": "金额",
+            "type": "amount",
+            "required": false,
+            "desc": "金额，类型：amount（待后端确认）",
+            "descSource": "generated",
+            "source": "mock",
+            "sources": [
+              "mock"
+            ],
+            "options": [],
+            "example": 0,
+            "children": []
+          },
+          {
+            "name": "status",
+            "label": "状态",
+            "type": "enum",
+            "required": false,
+            "desc": "状态，类型：enum（待后端确认）",
+            "descSource": "generated",
+            "source": "mock",
+            "sources": [
+              "mock"
+            ],
+            "options": [],
+            "example": "<enum>",
+            "children": []
+          },
+          {
+            "name": "customerName",
+            "label": "名称",
+            "type": "text",
+            "required": false,
+            "desc": "名称，类型：text（待后端确认）",
+            "descSource": "generated",
+            "source": "mock",
+            "sources": [
+              "mock"
+            ],
+            "options": [],
+            "example": "<text>",
+            "children": []
+          },
+          {
+            "name": "customerPhone",
+            "label": "电话",
+            "type": "phone",
+            "required": false,
+            "desc": "电话，类型：phone（待后端确认）",
+            "descSource": "generated",
+            "source": "mock",
+            "sources": [
+              "mock"
+            ],
+            "options": [],
+            "example": "13900000000",
+            "children": []
+          },
+          {
+            "name": "createTime",
+            "label": "时间",
+            "type": "datetime",
+            "required": false,
+            "desc": "时间，类型：datetime（待后端确认）",
+            "descSource": "generated",
+            "source": "mock",
+            "sources": [
+              "mock"
+            ],
+            "options": [],
+            "example": "2026-05-28 12:00:00",
+            "children": []
+          },
+          {
+            "name": "remark",
+            "label": "说明",
+            "type": "text",
+            "required": false,
+            "desc": "说明，类型：text（待后端确认）",
+            "descSource": "generated",
+            "source": "mock",
+            "sources": [
+              "mock"
+            ],
+            "options": [],
+            "example": "<text>",
+            "children": []
+          }
+        ],
+        "example": {
+          "params": {
+            "id": "<id>",
+            "name": "<text>",
+            "amount": 0,
+            "status": "<enum>",
+            "customerName": "<text>",
+            "customerPhone": "13900000000",
+            "createTime": "2026-05-28 12:00:00",
+            "remark": "<text>"
+          }
+        }
+      },
+      "response": {
+        "fields": [
+          {
+            "name": "state",
+            "label": "操作状态",
+            "type": "boolean",
+            "required": false,
+            "desc": "操作状态，类型：boolean",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": true,
+            "children": []
+          },
+          {
+            "name": "message",
+            "label": "提示信息",
+            "type": "text",
+            "required": false,
+            "desc": "提示信息，类型：text",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": "操作成功",
+            "children": []
+          }
+        ],
+        "example": {
+          "state": true,
+          "message": "操作成功"
+        }
+      }
     },
     {
       "method": "post",
       "url": "/api/demo/order/delete",
       "name": "删除",
-      "requestSchema": "idOnly",
-      "responseSchema": "success"
+      "moduleKey": "order",
+      "moduleTitle": "order",
+      "mockFile": "scripts/__test-fixtures__/mock/demo/order.mock.ts",
+      "fieldSources": [
+        "config"
+      ],
+      "request": {
+        "fields": [
+          {
+            "name": "id",
+            "label": "主键",
+            "type": "id",
+            "required": true,
+            "desc": "主键，类型：id",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": "<id>",
+            "children": []
+          }
+        ],
+        "example": {
+          "params": {
+            "id": "<id>"
+          }
+        }
+      },
+      "response": {
+        "fields": [
+          {
+            "name": "state",
+            "label": "操作状态",
+            "type": "boolean",
+            "required": false,
+            "desc": "操作状态，类型：boolean",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": true,
+            "children": []
+          },
+          {
+            "name": "message",
+            "label": "提示信息",
+            "type": "text",
+            "required": false,
+            "desc": "提示信息，类型：text",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": "操作成功",
+            "children": []
+          }
+        ],
+        "example": {
+          "state": true,
+          "message": "操作成功"
+        }
+      }
     },
     {
       "method": "post",
       "url": "/api/demo/order/statusOptions",
       "name": "选项数据",
-      "requestSchema": "optional",
-      "responseSchema": "options"
+      "moduleKey": "order",
+      "moduleTitle": "order",
+      "mockFile": "scripts/__test-fixtures__/mock/demo/order.mock.ts",
+      "fieldSources": [
+        "config"
+      ],
+      "request": {
+        "fields": [],
+        "example": {
+          "params": {}
+        }
+      },
+      "response": {
+        "fields": [
+          {
+            "name": "label",
+            "label": "显示文本",
+            "type": "text",
+            "required": false,
+            "desc": "显示文本，类型：text",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": "待处理",
+            "children": []
+          },
+          {
+            "name": "value",
+            "label": "选项值",
+            "type": "text",
+            "required": false,
+            "desc": "选项值，类型：text",
+            "descSource": "config",
+            "source": "config",
+            "sources": [
+              "config"
+            ],
+            "options": [],
+            "example": "pending",
+            "children": []
+          }
+        ],
+        "example": {
+          "data": [
+            {
+              "label": "待处理",
+              "value": "pending"
+            }
+          ]
+        }
+      }
     }
   ]
 }

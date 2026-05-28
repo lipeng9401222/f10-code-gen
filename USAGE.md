@@ -52,6 +52,7 @@ AI 会自动：
 | 升级主体（不动入口） | `npx epoint-f10code-gen update` |
 | 跑 skill 健康检查 | `npx epoint-f10code-gen smoke` |
 | 校验你生成的 .vue 是否合规 | `npx epoint-f10code-gen validate <vue-file>` |
+| 根据 mock 生成接口文档 | `npx epoint-f10code-gen gen-api-doc <mock-file\|mock-dir>` |
 | 看帮助 | `npx epoint-f10code-gen --help` |
 
 ---
@@ -117,6 +118,24 @@ npx --registry=https://nexus.your-company.com/.../ epoint-f10code-gen init
 2. **重启 IDE**：有些 IDE（特别是 Cursor）需要重启加载新 skill
 3. **关键字测试**：在聊天里说 "ep-data-grid"、"defineDataModel"、"标段管理" 等关键字，应该触发 skill
 4. **主体在不在**：`ls epoint-f10code-gen/SKILL.md`，应该能看到
+
+### Q7: 已有 mock，怎么单独生成后端接口文档？
+
+单页面 mock：
+
+```bash
+npx epoint-f10code-gen gen-api-doc ./mock/demo/order.mock.ts
+```
+
+多页面套件：
+
+```bash
+npx epoint-f10code-gen gen-api-doc ./mock/ipd \
+  --config ./src/views/ipd/config.js \
+  --api-prefix /api/ipd
+```
+
+目录输入会按模块分章；`--config` 用页面配置补齐字段名、中文名、必填和选项；`--api-prefix` 只收集业务接口，避免把框架端点写进业务接口文档。
 
 ---
 

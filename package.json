@@ -1,6 +1,6 @@
 {
   "name": "epoint-f10code-gen",
-  "version": "0.4.0",
+  "version": "0.4.2",
   "description": "epoint F10 Vue 框架页面代码生成 skill（rules + workflows + references + IDE 入口模板）",
   "type": "module",
   "bin": {

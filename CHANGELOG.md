@@ -4,6 +4,32 @@
 
 ---
 
+## v0.4.2 · 2026-05-28 · 接口文档明细化
+
+### 背景
+
+真实 IPD 套件生成后反馈：接口文档只有总览，缺少逐接口请求字段、响应字段和示例；`.api.json` 也只保留 `method/url/name`，无法支撑后端联调。
+
+### 修改 (Changed)
+
+- **接口文档契约升级**：`workflows/page/07-api-doc.md` 增加 single / suite 模式；多页面、多 mock、多 baseUrl 时必须按模块分章
+- **逐接口 schema 强制化**：每个接口必须产出 `request.fields`、`request.example`、`response.fields`、`response.example`、`fieldSources`
+- **接口分类扩展**：补充 `/detail`、`/data`、`*List`、`*Detail`、`add*`、`update*`、`/*Options`、`/common/*Options` 等业务接口形态
+- **`gen-api-doc` CLI 增强**：支持 `<mock-file|mock-dir>`；新增 `--config <file>` 读取 `MODULE_CONFIGS` / `ACTION_FORM_CONFIGS`；新增 `--api-prefix <path>` 过滤业务接口
+- **模板升级**：Markdown 从总览文档改为逐接口详情；JSON 从 `requestSchema/responseSchema` 改为实际 request / response 对象
+- **回归样例**：新增 `ipd-lite` suite fixture，覆盖公共 options、dashboard data、stageDetail、action form 和框架端点过滤
+
+### 验证
+
+- ✓ `node --check scripts/gen-api-doc.mjs`
+- ✓ `node --check scripts/smoke-test.mjs`
+- ✓ `node --check bin/cli.mjs`
+- ✓ `node scripts/__test-fixtures__/run-regression.sh` → 10 pass / 0 fail
+- ✓ `node scripts/smoke-test.mjs`
+- ✓ `node bin/cli.mjs smoke`
+
+---
+
 ## v0.4.1 · 2026-05-28 · 触发描述瘦身
 
 ### 背景

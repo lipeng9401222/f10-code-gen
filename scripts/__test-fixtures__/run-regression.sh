@@ -41,6 +41,15 @@ echo "=== gen-api-doc 端到端 ==="
 node bin/cli.mjs gen-api-doc scripts/__test-fixtures__/mock/demo/order.mock.ts > /dev/null 2>&1
 assert_exit "gen-api-doc demo/order.mock.ts" 0 $?
 
+node -e "const j=require('./scripts/__test-fixtures__/docs/api/demo/order.api.json'); if (j.interfaces.length !== 6) process.exit(1); if (j.interfaces.some((it) => !it.request?.fields || !it.response?.fields || !it.request?.example || !it.response?.example)) process.exit(1);" > /dev/null 2>&1
+assert_exit "gen-api-doc order.api.json（逐接口 request/response）" 0 $?
+
+node bin/cli.mjs gen-api-doc scripts/__test-fixtures__/mock/ipd-lite --config scripts/__test-fixtures__/src/views/ipd-lite/config.js --api-prefix /api/ipd-lite --out-dir scripts/__test-fixtures__/docs/api/ipd-lite > /dev/null 2>&1
+assert_exit "gen-api-doc ipd-lite suite" 0 $?
+
+node -e "const j=require('./scripts/__test-fixtures__/docs/api/ipd-lite/ipd-lite.api.json'); const urls=j.interfaces.map((it)=>it.url); if (j.mode !== 'suite') process.exit(1); if (j.interfaces.length !== 15) process.exit(1); if (urls.some((url)=>url.startsWith('/resourceaction/') || url.startsWith('/auth/'))) process.exit(1); if (!urls.includes('/api/ipd-lite/trdcp-review/stageDetail')) process.exit(1); if (j.interfaces.some((it)=>!Array.isArray(it.request?.fields) || !it.request.example || !Array.isArray(it.response?.fields) || !it.response.example)) process.exit(1);" > /dev/null 2>&1
+assert_exit "gen-api-doc ipd-lite.api.json（suite + 前缀过滤）" 0 $?
+
 echo ""
 echo "=== smoke-test ==="
 node scripts/smoke-test.mjs > /dev/null 2>&1

@@ -127,7 +127,21 @@ epoint-f10code-gen/
 | 同步最新规范文档到 skill 里 | `npx epoint-f10code-gen sync` |
 | 自检 skill 完整性 | `npx epoint-f10code-gen smoke` |
 | 验证生成的 .vue 是否合规 | `npx epoint-f10code-gen validate <文件路径>` |
-| 根据 mock 反推接口文档（v0.4） | `npx epoint-f10code-gen gen-api-doc <mock-file>` |
+| 根据 mock 反推接口文档（v0.4.2） | `npx epoint-f10code-gen gen-api-doc <mock-file\|mock-dir>` |
+
+接口文档支持单文件和套件目录两种输入：
+
+```bash
+# 单页面
+npx epoint-f10code-gen gen-api-doc ./mock/demo/order.mock.ts
+
+# 多页面套件：按页面配置补齐字段，并只收集业务接口
+npx epoint-f10code-gen gen-api-doc ./mock/ipd \
+  --config ./src/views/ipd/config.js \
+  --api-prefix /api/ipd
+```
+
+生成的 Markdown / JSON 会按接口展开 `request.fields`、`response.fields`、示例请求、示例响应和字段来源。
 
 ---
 
